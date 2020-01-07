@@ -1,5 +1,6 @@
 package theschoolmanagmentsystem.domain;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Basic;
@@ -11,7 +12,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
 @Entity
-public class Education {
+public class Education implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

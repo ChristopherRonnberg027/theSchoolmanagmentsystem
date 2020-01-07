@@ -16,7 +16,7 @@ public interface CourseDAO {
      * For editing, use editCourse() method
      * @param c - newly created Course
      */
-    public void createCourse(Course c);
+    public void create(Course c);
     
     /**
      * Method used for editing course
@@ -27,14 +27,14 @@ public interface CourseDAO {
      * 
      * @param c - Course to edit
      */
-    public void editCourse(Course c);
+    public void edit(Course c);
     
     /**
      * Returns Course with the speciffic id.
      * @param id
      * @return Course
      */
-    public Course findById(Long id);
+    public Course findCourseById(Long id);
     
     /**
      * Returns a List od Courses based on a

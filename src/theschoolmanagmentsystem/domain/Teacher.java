@@ -3,6 +3,7 @@
  */
 package theschoolmanagmentsystem.domain;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Basic;
@@ -16,7 +17,7 @@ import javax.persistence.ManyToMany;
  * @author Christopher
  */
 @Entity
-public class Teacher {
+public class Teacher implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
