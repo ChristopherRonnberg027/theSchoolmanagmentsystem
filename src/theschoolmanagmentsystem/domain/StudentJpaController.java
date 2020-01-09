@@ -13,7 +13,7 @@ import javax.persistence.criteria.Root;
 import theschoolmanagmentsystem.domain.exceptions.NonexistentEntityException;
 
 
-public class StudentJpaController implements Serializable {
+public class StudentJpaController implements Serializable, StudentDAO {
 
     public StudentJpaController(EntityManagerFactory emf) {
         this.emf = emf;
@@ -24,7 +24,8 @@ public class StudentJpaController implements Serializable {
         return emf.createEntityManager();
     }
 
-    public void create(Student student) {
+    @Override
+    public void createStudent(Student student) {
         EntityManager em = null;
         try {
             em = getEntityManager();
@@ -47,7 +48,8 @@ public class StudentJpaController implements Serializable {
         }
     }
 
-    public void edit(Student student) throws NonexistentEntityException, Exception {
+    @Override
+    public void editStudent(Student student) throws NonexistentEntityException, Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
@@ -73,7 +75,7 @@ public class StudentJpaController implements Serializable {
             String msg = ex.getLocalizedMessage();
             if (msg == null || msg.length() == 0) {
                 Long id = student.getPn();
-                if (findStudent(id) == null) {
+                if (findStudentById(id) == null) {
                     throw new NonexistentEntityException("The student with id " + id + " no longer exists.");
                 }
             }
@@ -85,7 +87,8 @@ public class StudentJpaController implements Serializable {
         }
     }
 
-    public void destroy(Long id) throws NonexistentEntityException {
+    @Override
+    public void destroyStudent(Long id) throws NonexistentEntityException {
         EntityManager em = null;
         try {
             em = getEntityManager();
@@ -111,6 +114,41 @@ public class StudentJpaController implements Serializable {
         }
     }
 
+    @Override
+    public void destroyStudent(Student s) throws NonexistentEntityException {
+        EntityManager em = null;
+        long id;
+        if(s!=null)
+            id = s.getPn();
+        else
+            throw new NonexistentEntityException("No such Student");
+            
+        try {
+            em = getEntityManager();
+            em.getTransaction().begin();
+            Student student;
+            try {
+                student = em.getReference(Student.class, id);
+                student.getPn();
+            } catch (EntityNotFoundException enfe) {
+                throw new NonexistentEntityException("The student with id " + id + " no longer exists.", enfe);
+            }
+            Education education = student.getEducation();
+            if (education != null) {
+                education.getStudents().remove(student);
+                education = em.merge(education);
+            }
+            em.remove(student);
+            em.getTransaction().commit();
+        } finally {
+            if (em != null) {
+                em.close();
+            }
+        }
+    }
+
+    
+    @Override
     public List<Student> findStudentEntities() {
         return findStudentEntities(true, -1, -1);
     }
@@ -135,7 +173,8 @@ public class StudentJpaController implements Serializable {
         }
     }
 
-    public Student findStudent(Long id) {
+    @Override
+    public Student findStudentById(Long id) {
         EntityManager em = getEntityManager();
         try {
             return em.find(Student.class, id);
@@ -144,6 +183,7 @@ public class StudentJpaController implements Serializable {
         }
     }
 
+    @Override
     public int getStudentCount() {
         EntityManager em = getEntityManager();
         try {
@@ -156,5 +196,17 @@ public class StudentJpaController implements Serializable {
             em.close();
         }
     }
+
+    @Override
+    public List<Student> findStudentByFirstName(String firstName) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public List<Student> findStudentByLasttName(String lastName) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    
 
 }

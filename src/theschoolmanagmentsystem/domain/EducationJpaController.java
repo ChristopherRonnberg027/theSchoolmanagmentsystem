@@ -1,5 +1,3 @@
-
-
 package theschoolmanagmentsystem.domain;
 
 import java.io.Serializable;
@@ -13,8 +11,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import theschoolmanagmentsystem.domain.exceptions.NonexistentEntityException;
 
-
-public class EducationJpaController implements Serializable {
+public class EducationJpaController implements Serializable, EducationDAO {
 
     public EducationJpaController(EntityManagerFactory emf) {
         this.emf = emf;
@@ -25,7 +22,8 @@ public class EducationJpaController implements Serializable {
         return emf.createEntityManager();
     }
 
-    public void create(Education education) {
+    @Override
+    public void createEducation(Education education) {
         if (education.getStudents() == null) {
             education.setStudents(new ArrayList<Student>());
         }
@@ -70,7 +68,8 @@ public class EducationJpaController implements Serializable {
         }
     }
 
-    public void edit(Education education) throws NonexistentEntityException, Exception {
+    @Override
+    public void editEducation(Education education) throws NonexistentEntityException, Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
@@ -129,7 +128,7 @@ public class EducationJpaController implements Serializable {
             String msg = ex.getLocalizedMessage();
             if (msg == null || msg.length() == 0) {
                 Long id = education.getId();
-                if (findEducation(id) == null) {
+                if (findEducationById(id) == null) {
                     throw new NonexistentEntityException("The education with id " + id + " no longer exists.");
                 }
             }
@@ -141,7 +140,8 @@ public class EducationJpaController implements Serializable {
         }
     }
 
-    public void destroy(Long id) throws NonexistentEntityException {
+    @Override
+    public void destroyEducation(Long id) throws NonexistentEntityException {
         EntityManager em = null;
         try {
             em = getEntityManager();
@@ -172,6 +172,45 @@ public class EducationJpaController implements Serializable {
         }
     }
 
+    @Override
+    public void destroyEducation(Education e) throws NonexistentEntityException {
+        EntityManager em = null;
+        Long id;
+        if(e!=null)
+            id = e.getId();
+        else
+            throw  new NonexistentEntityException("No such education");
+        try {
+            em = getEntityManager();
+            em.getTransaction().begin();
+            Education education;
+            try {
+                education = em.getReference(Education.class, id);
+                education.getId();
+            } catch (EntityNotFoundException enfe) {
+                throw new NonexistentEntityException("The education with id " + id + " no longer exists.", enfe);
+            }
+            List<Student> students = education.getStudents();
+            for (Student studentsStudent : students) {
+                studentsStudent.setEducation(null);
+                studentsStudent = em.merge(studentsStudent);
+            }
+            List<Course> courses = education.getCourses();
+            for (Course coursesCourse : courses) {
+                coursesCourse.getEducations().remove(education);
+                coursesCourse = em.merge(coursesCourse);
+            }
+            em.remove(education);
+            em.getTransaction().commit();
+        } finally {
+            if (em != null) {
+                em.close();
+            }
+        }
+    }
+
+    
+    @Override
     public List<Education> findEducationEntities() {
         return findEducationEntities(true, -1, -1);
     }
@@ -196,7 +235,8 @@ public class EducationJpaController implements Serializable {
         }
     }
 
-    public Education findEducation(Long id) {
+    @Override
+    public Education findEducationById(Long id) {
         EntityManager em = getEntityManager();
         try {
             return em.find(Education.class, id);
@@ -205,6 +245,7 @@ public class EducationJpaController implements Serializable {
         }
     }
 
+    @Override
     public int getEducationCount() {
         EntityManager em = getEntityManager();
         try {
@@ -216,6 +257,11 @@ public class EducationJpaController implements Serializable {
         } finally {
             em.close();
         }
+    }
+
+    @Override
+    public List<Education> findEducationByName(String name) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

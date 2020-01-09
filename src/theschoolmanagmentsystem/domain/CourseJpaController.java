@@ -14,7 +14,7 @@ import javax.persistence.EntityManagerFactory;
 import theschoolmanagmentsystem.domain.exceptions.NonexistentEntityException;
 
 
-public class CourseJpaController implements Serializable {
+public class CourseJpaController implements Serializable, CourseDAO {
 
     public CourseJpaController(EntityManagerFactory emf) {
         this.emf = emf;
@@ -25,7 +25,8 @@ public class CourseJpaController implements Serializable {
         return emf.createEntityManager();
     }
 
-    public void create(Course course) {
+    @Override
+    public void createCourse(Course course) {
         if (course.getEducations() == null) {
             course.setEducations(new ArrayList<Education>());
         }
@@ -52,7 +53,8 @@ public class CourseJpaController implements Serializable {
         }
     }
 
-    public void edit(Course course) throws NonexistentEntityException, Exception {
+    @Override
+    public void editCourse(Course course) throws NonexistentEntityException, Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
@@ -97,7 +99,8 @@ public class CourseJpaController implements Serializable {
         }
     }
 
-    public void destroy(Long id) throws NonexistentEntityException {
+    @Override
+    public void destroyCourse(Long id) throws NonexistentEntityException {
         EntityManager em = null;
         try {
             em = getEntityManager();
@@ -122,7 +125,40 @@ public class CourseJpaController implements Serializable {
             }
         }
     }
+    
+    @Override
+    public void destroyCourse(Course c) throws NonexistentEntityException {
+        EntityManager em = null;
+        Long id;
+        if(c!=null)
+            id = c.getId();
+        else
+            throw new NonexistentEntityException("No such course");
+        try {
+            em = getEntityManager();
+            em.getTransaction().begin();
+            Course course;
+            try {
+                course = em.getReference(Course.class, id);
+                course.getId();
+            } catch (EntityNotFoundException enfe) {
+                throw new NonexistentEntityException("The course with id " + id + " no longer exists.", enfe);
+            }
+            List<Education> educations = course.getEducations();
+            for (Education educationsEducation : educations) {
+                educationsEducation.getCourses().remove(course);
+                educationsEducation = em.merge(educationsEducation);
+            }
+            em.remove(course);
+            em.getTransaction().commit();
+        } finally {
+            if (em != null) {
+                em.close();
+            }
+        }
+    }
 
+    @Override
     public List<Course> findCourseEntities() {
         return findCourseEntities(true, -1, -1);
     }
@@ -147,6 +183,7 @@ public class CourseJpaController implements Serializable {
         }
     }
 
+    @Override
     public Course findCourseById(Long id) {
         EntityManager em = getEntityManager();
         try {
@@ -155,13 +192,7 @@ public class CourseJpaController implements Serializable {
             em.close();
         }
     }
-//    
-//    public List<Course> findByName(String name) {
-//        EntityManager em = getEntityManager();
-//        try {
-//            em.createQuery("")
-//        }
-//    }
+
 
     public int getCourseCount() {
         EntityManager em = getEntityManager();
@@ -174,6 +205,11 @@ public class CourseJpaController implements Serializable {
         } finally {
             em.close();
         }
+    }
+
+    @Override
+    public List<Course> findCourseByName(String name) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

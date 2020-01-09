@@ -2,6 +2,7 @@
 package theschoolmanagmentsystem.domain;
 
 import java.util.List;
+import theschoolmanagmentsystem.domain.exceptions.NonexistentEntityException;
 
 /**
  *  Acces inteface for Student modell. 
@@ -26,15 +27,16 @@ public interface StudentDAO {
      * For creating new Student use createStudent()
      * 
      * @param s - Student to edit
+     * @throws theschoolmanagmentsystem.domain.exceptions.NonexistentEntityException
      */
-    public void editStudent(Student s);
+    public void editStudent(Student s)throws NonexistentEntityException, Exception;
     
     /**
      * Returns Student with the speciffic id.
      * @param id
      * @return Student
      */
-    public Student findById(Long id);
+    public Student findStudentById(Long id);
     
     /**
      * Returns a List od Student based on a
@@ -42,7 +44,7 @@ public interface StudentDAO {
      * @param firstName
      * @return List of Student
      */
-    public List<Student> findByFirstName(String firstName);
+    public List<Student> findStudentByFirstName(String firstName);
     
     /**
      * Returns a List od Student based on a
@@ -50,19 +52,33 @@ public interface StudentDAO {
      * @param lastName
      * @return List of Student
      */
-    public List<Student> findByLasttName(String lastName);
+    public List<Student> findStudentByLasttName(String lastName);
     
     /**
      * Delete a speciffic Student
      * 
      * @param s - Student to be deleted.
+     * @throws theschoolmanagmentsystem.domain.exceptions.NonexistentEntityException
      */
-    public void deleteStudent(Student s);
+    public void destroyStudent(Student s)throws NonexistentEntityException;
     
     /**
      * Delete a Student with a speciffic id.
      *
      * @param id 
+     * @throws theschoolmanagmentsystem.domain.exceptions.NonexistentEntityException 
      */
-    public void deleteStudent(Long id);
+    public void destroyStudent(Long id)throws NonexistentEntityException;
+    
+    /**
+     * 
+     * @return a List of all Students
+     */
+    public List<Student> findStudentEntities();
+    
+    /**
+     * 
+     * @return Student entities count
+     */
+    public int getStudentCount();
 }
