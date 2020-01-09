@@ -1,5 +1,3 @@
-
-
 package theschoolmanagmentsystem.domain;
 
 import java.io.Serializable;
@@ -11,7 +9,6 @@ import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import theschoolmanagmentsystem.domain.exceptions.NonexistentEntityException;
-
 
 public class StudentJpaController implements Serializable, StudentDAO {
 
@@ -118,11 +115,12 @@ public class StudentJpaController implements Serializable, StudentDAO {
     public void destroyStudent(Student s) throws NonexistentEntityException {
         EntityManager em = null;
         long id;
-        if(s!=null)
+        if (s != null) {
             id = s.getPn();
-        else
+        } else {
             throw new NonexistentEntityException("No such Student");
-            
+        }
+
         try {
             em = getEntityManager();
             em.getTransaction().begin();
@@ -147,7 +145,6 @@ public class StudentJpaController implements Serializable, StudentDAO {
         }
     }
 
-    
     @Override
     public List<Student> findStudentEntities() {
         return findStudentEntities(true, -1, -1);
@@ -199,14 +196,29 @@ public class StudentJpaController implements Serializable, StudentDAO {
 
     @Override
     public List<Student> findStudentByFirstName(String firstName) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
+        EntityManager em = getEntityManager();
+        try {
+            Query query = em.createQuery("Select s FROM Student s WHERE s.firstName LIKE :firstName");
+            query.setParameter("firstName", firstName);
+            return query.getResultList();
+        } finally {
+            em.close();
+        }
+
     }
 
     @Override
-    public List<Student> findStudentByLasttName(String lastName) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+    public List<Student> findStudentBySurName(String surName) {
 
-    
+        EntityManager em = getEntityManager();
+        try {
+            Query query = em.createQuery("Select s FROM Student s WHERE s.surName LIKE :surName");
+            query.setParameter("surName", surName);
+            return query.getResultList();
+        } finally {
+            em.close();
+        }
+    }
 
 }

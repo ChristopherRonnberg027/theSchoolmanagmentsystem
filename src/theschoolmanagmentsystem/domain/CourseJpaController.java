@@ -1,5 +1,3 @@
-
-
 package theschoolmanagmentsystem.domain;
 
 import java.io.Serializable;
@@ -12,7 +10,6 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import theschoolmanagmentsystem.domain.exceptions.NonexistentEntityException;
-
 
 public class CourseJpaController implements Serializable, CourseDAO {
 
@@ -125,15 +122,16 @@ public class CourseJpaController implements Serializable, CourseDAO {
             }
         }
     }
-    
+
     @Override
     public void destroyCourse(Course c) throws NonexistentEntityException {
         EntityManager em = null;
         Long id;
-        if(c!=null)
+        if (c != null) {
             id = c.getId();
-        else
+        } else {
             throw new NonexistentEntityException("No such course");
+        }
         try {
             em = getEntityManager();
             em.getTransaction().begin();
@@ -193,7 +191,7 @@ public class CourseJpaController implements Serializable, CourseDAO {
         }
     }
 
-
+    @Override
     public int getCourseCount() {
         EntityManager em = getEntityManager();
         try {
@@ -209,7 +207,14 @@ public class CourseJpaController implements Serializable, CourseDAO {
 
     @Override
     public List<Course> findCourseByName(String name) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        EntityManager em = getEntityManager();
+        try {
+            Query query = em.createQuery("Select c FROM Course c WHERE c.name LIKE :name");
+            query.setParameter("name", name);
+            return query.getResultList();
+        } finally {
+            em.close();
+        }
     }
 
 }

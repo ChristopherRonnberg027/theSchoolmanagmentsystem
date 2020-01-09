@@ -210,12 +210,28 @@ public class TeacherJpaController implements Serializable, TeacherDAO {
 
     @Override
     public List<Teacher> findTeacherByFirstName(String firstName) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
+        EntityManager em = getEntityManager();
+        try {
+            Query query = em.createQuery("Select t FROM Teacher t WHERE t.firstName LIKE :firstName");
+            query.setParameter("firstName", firstName);
+            return query.getResultList();
+        } finally {
+            em.close();
+        }
     }
 
     @Override
-    public List<Teacher> findTeacherByLasttName(String lastName) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public List<Teacher> findTeacherBySurName(String surName) {
+        
+        EntityManager em = getEntityManager();
+        try {
+            Query query = em.createQuery("Select t FROM Teacher t WHERE t.surName LIKE :surName");
+            query.setParameter("surName", surName);
+            return query.getResultList();
+        } finally {
+            em.close();
+        }
     }
 
 }

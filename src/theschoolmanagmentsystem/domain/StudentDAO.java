@@ -49,10 +49,10 @@ public interface StudentDAO {
     /**
      * Returns a List od Student based on a
      * String parameter.
-     * @param lastName
+     * @param surName
      * @return List of Student
      */
-    public List<Student> findStudentByLasttName(String lastName);
+    public List<Student> findStudentBySurName(String surName);
     
     /**
      * Delete a speciffic Student

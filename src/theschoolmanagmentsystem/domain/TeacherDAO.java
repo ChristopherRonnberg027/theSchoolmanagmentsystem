@@ -46,10 +46,10 @@ public interface TeacherDAO {
     /**
      * Returns a List od Teacher based on a String parameter.
      *
-     * @param lastName
+     * @param surName
      * @return List of Teacher
      */
-    public List<Teacher> findTeacherByLasttName(String lastName);
+    public List<Teacher> findTeacherBySurName(String surName);
 
     /**
      * Delete a speciffic Teacher

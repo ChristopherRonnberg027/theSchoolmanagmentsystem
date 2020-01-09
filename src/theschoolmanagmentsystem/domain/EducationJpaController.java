@@ -261,7 +261,16 @@ public class EducationJpaController implements Serializable, EducationDAO {
 
     @Override
     public List<Education> findEducationByName(String name) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
+        EntityManager em = getEntityManager();
+        try {
+            Query query = em.createQuery("Select e FROM Education e WHERE e.name LIKE :name");
+            query.setParameter("name", name);
+            return query.getResultList();
+        } finally {
+            em.close();
+        }
+        
     }
 
 }
