@@ -68,7 +68,6 @@ public interface EducationDAO {
     public List<Education> findEducationEntities();
     
     /**
-     * 
      * @return Education entities count 
      */
     public int getEducationCount();

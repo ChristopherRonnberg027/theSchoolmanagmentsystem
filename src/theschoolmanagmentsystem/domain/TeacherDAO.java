@@ -68,13 +68,11 @@ public interface TeacherDAO {
     public void destroyTeacher(Long id) throws NonexistentEntityException;
 
     /**
-     *
      * @return a List of all the teachers
      */
     public List<Teacher> findTeacherEntities();
 
     /**
-     *
      * @return Teacher entities count
      */
     public int getTeacherCount();

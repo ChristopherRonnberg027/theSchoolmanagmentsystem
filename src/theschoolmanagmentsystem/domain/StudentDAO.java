@@ -71,13 +71,11 @@ public interface StudentDAO {
     public void destroyStudent(Long id)throws NonexistentEntityException;
     
     /**
-     * 
      * @return a List of all Students
      */
     public List<Student> findStudentEntities();
     
     /**
-     * 
      * @return Student entities count
      */
     public int getStudentCount();

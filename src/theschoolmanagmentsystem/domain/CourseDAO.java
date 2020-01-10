@@ -70,7 +70,6 @@ public interface CourseDAO {
     public List<Course> findCourseEntities();
     
     /**
-     * 
      * @return Course entities count
      */
     public int getCourseCount();
