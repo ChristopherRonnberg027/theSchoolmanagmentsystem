@@ -1,5 +1,5 @@
 
-package theschoolmanagmetsystem.databaseControl;
+package theschoolmanagmentsystem.databaseControl;
 
 import java.util.List;
 import theschoolmanagmentsystem.domain.Course;
