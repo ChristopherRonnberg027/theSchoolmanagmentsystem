@@ -1,4 +1,4 @@
-package databaseControl;
+package theschoolmanagmetsystem.databaseControl;
 
 import java.util.List;
 import java.util.logging.Level;
