@@ -1,4 +1,4 @@
-package theschoolmanagmentsystem.domain.exceptions.userEnvironment;
+package theschoolmanagmentsystem.userEnvironment;
 
 import java.util.Scanner;
 
