@@ -35,7 +35,7 @@ public class Course implements Serializable {
     @Basic
     private String schoolBreak;
 
-    @ManyToMany(mappedBy = "teachers")
+    @ManyToMany
     private List<Teacher> teachers;
 
     @ManyToMany(mappedBy = "courses")

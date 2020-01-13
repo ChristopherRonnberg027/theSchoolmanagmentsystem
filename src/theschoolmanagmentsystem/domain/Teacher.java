@@ -29,7 +29,7 @@ public class Teacher implements Serializable {
     @Basic
     private String surName;
 
-    @ManyToMany
+    @ManyToMany(mappedBy = "teachers")
     private List<Course> courses;
 
     public Long getPn() {
