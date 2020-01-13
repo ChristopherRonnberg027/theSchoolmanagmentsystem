@@ -189,21 +189,21 @@ public interface dbDAO {
     List<Student> getAllStudents();
     
     /**
-     * Returns a List od Student based on a
-     * String parameter.
-     * @param firstName
+     * Returns a List od Student that mach a certain name,
+     * borh first and last.
+     * @param name
      * @return List of Student
      */
-    List<Student> findStudentByFirstName(String firstName);
+    List<Student> findStudentByName(String name);
     
-    /**
-     * Returns a List od Student based on a
-     * String parameter.
-     * @param surName
-     * @return List of Student
-     */
-    List<Student> findStudentBySurName(String surName);
-    
+//    /**
+//     * Returns a List od Student based on a
+//     * String parameter.
+//     * @param surName
+//     * @return List of Student
+//     */
+//    List<Student> findStudentBySurName(String surName);
+//    
     /**
      * @return Student entities count
      */
@@ -258,20 +258,20 @@ public interface dbDAO {
     
     /**
      * Returns a List od Teacher based on a String parameter.
-     *
-     * @param firstName
+     * It searches both for name and surname
+     * @param name
      * @return List of Teacher
      */
-    List<Teacher> findTeacherByFirstName(String firstName);
+    List<Teacher> findTeacherByName(String name);
     
-    /**
-     * Returns a List od Teacher based on a String parameter.
-     *
-     * @param surName
-     * @return List of Teacher
-     */
-    List<Teacher> findTeacherBySurName(String surName);
-    
+//    /**
+//     * Returns a List od Teacher based on a String parameter.
+//     *
+//     * @param surName
+//     * @return List of Teacher
+//     */
+//    List<Teacher> findTeacherBySurName(String surName);
+//    
     /**
      * @return Teacher entities count
      */

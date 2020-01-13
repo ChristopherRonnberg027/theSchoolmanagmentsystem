@@ -209,29 +209,29 @@ public class TeacherJpaController implements Serializable, TeacherDAO {
     }
 
     @Override
-    public List<Teacher> findTeacherByFirstName(String firstName) {
+    public List<Teacher> findTeacherByName(String name) {
         
         EntityManager em = getEntityManager();
         try {
-            Query query = em.createQuery("Select t FROM Teacher t WHERE t.firstName LIKE :firstName");
-            query.setParameter("firstName", firstName);
+            Query query = em.createQuery("Select t FROM Teacher t WHERE t.firstName LIKE :name OR t.surName LIKE :name");
+            query.setParameter("name", name);
             return query.getResultList();
         } finally {
             em.close();
         }
     }
 
-    @Override
-    public List<Teacher> findTeacherBySurName(String surName) {
-        
-        EntityManager em = getEntityManager();
-        try {
-            Query query = em.createQuery("Select t FROM Teacher t WHERE t.surName LIKE :surName");
-            query.setParameter("surName", surName);
-            return query.getResultList();
-        } finally {
-            em.close();
-        }
-    }
+//    @Override
+//    public List<Teacher> findTeacherBySurName(String surName) {
+//        
+//        EntityManager em = getEntityManager();
+//        try {
+//            Query query = em.createQuery("Select t FROM Teacher t WHERE t.surName LIKE :surName");
+//            query.setParameter("surName", surName);
+//            return query.getResultList();
+//        } finally {
+//            em.close();
+//        }
+//    }
 
 }
