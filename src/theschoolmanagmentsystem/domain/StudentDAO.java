@@ -39,20 +39,20 @@ public interface StudentDAO {
     public Student findStudentById(Long id);
     
     /**
-     * Returns a List od Student based on a
-     * String parameter.
-     * @param firstName
+     * Returns a List od Student that mach a certain name,
+     * borh first and last.
+     * @param name
      * @return List of Student
      */
-    public List<Student> findStudentByFirstName(String firstName);
+    public List<Student> findStudentByName(String name);
     
-    /**
-     * Returns a List od Student based on a
-     * String parameter.
-     * @param surName
-     * @return List of Student
-     */
-    public List<Student> findStudentBySurName(String surName);
+//    /**
+//     * Returns a List od Student based on a
+//     * String parameter.
+//     * @param surName
+//     * @return List of Student
+//     */
+//    public List<Student> findStudentBySurName(String surName);
     
     /**
      * Delete a speciffic Student

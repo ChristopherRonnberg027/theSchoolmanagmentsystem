@@ -195,12 +195,12 @@ public class StudentJpaController implements Serializable, StudentDAO {
     }
 
     @Override
-    public List<Student> findStudentByFirstName(String firstName) {
+    public List<Student> findStudentByName(String name) {
 
         EntityManager em = getEntityManager();
         try {
-            Query query = em.createQuery("Select s FROM Student s WHERE s.firstName LIKE :firstName");
-            query.setParameter("firstName", firstName);
+            Query query = em.createQuery("Select s FROM Student s WHERE s.firstName LIKE :name OR s.surName LIKE :name");
+            query.setParameter("name", name);
             return query.getResultList();
         } finally {
             em.close();
@@ -208,17 +208,17 @@ public class StudentJpaController implements Serializable, StudentDAO {
 
     }
 
-    @Override
-    public List<Student> findStudentBySurName(String surName) {
-
-        EntityManager em = getEntityManager();
-        try {
-            Query query = em.createQuery("Select s FROM Student s WHERE s.surName LIKE :surName");
-            query.setParameter("surName", surName);
-            return query.getResultList();
-        } finally {
-            em.close();
-        }
-    }
+//    @Override
+//    public List<Student> findStudentBySurName(String surName) {
+//
+//        EntityManager em = getEntityManager();
+//        try {
+//            Query query = em.createQuery("Select s FROM Student s WHERE s.surName LIKE :surName");
+//            query.setParameter("surName", surName);
+//            return query.getResultList();
+//        } finally {
+//            em.close();
+//        }
+//    }
 
 }

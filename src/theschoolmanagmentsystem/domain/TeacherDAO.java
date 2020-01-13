@@ -37,19 +37,19 @@ public interface TeacherDAO {
 
     /**
      * Returns a List od Teacher based on a String parameter.
-     *
-     * @param firstName
+     * it searches both as name and as last name.
+     * @param name
      * @return List of Teacher
      */
-    public List<Teacher> findTeacherByFirstName(String firstName);
+    public List<Teacher> findTeacherByName(String name);
 
-    /**
-     * Returns a List od Teacher based on a String parameter.
-     *
-     * @param surName
-     * @return List of Teacher
-     */
-    public List<Teacher> findTeacherBySurName(String surName);
+//    /**
+//     * Returns a List od Teacher based on a String parameter.
+//     *
+//     * @param surName
+//     * @return List of Teacher
+//     */
+//    public List<Teacher> findTeacherBySurName(String surName);
 
     /**
      * Delete a speciffic Teacher
