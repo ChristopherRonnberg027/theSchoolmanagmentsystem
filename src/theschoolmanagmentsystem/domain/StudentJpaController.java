@@ -10,6 +10,9 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import theschoolmanagmentsystem.domain.exceptions.NonexistentEntityException;
 
+/**
+ * @author ITHSivju
+ */
 public class StudentJpaController implements Serializable, StudentDAO {
 
     public StudentJpaController(EntityManagerFactory emf) {

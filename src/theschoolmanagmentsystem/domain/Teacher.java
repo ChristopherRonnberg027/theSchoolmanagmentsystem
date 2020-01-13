@@ -14,7 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 
 /**
- * @author Christopher
+ * @author ITHSivju
  */
 @Entity
 public class Teacher implements Serializable {
@@ -29,7 +29,7 @@ public class Teacher implements Serializable {
     @Basic
     private String surName;
 
-    @ManyToMany
+    @ManyToMany(mappedBy = "teachers")
     private List<Course> courses;
 
     public Long getPn() {

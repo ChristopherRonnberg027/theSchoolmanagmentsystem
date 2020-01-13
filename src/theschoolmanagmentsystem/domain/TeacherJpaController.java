@@ -14,6 +14,9 @@ import javax.persistence.EntityManagerFactory;
 import theschoolmanagmentsystem.domain.exceptions.NonexistentEntityException;
 
 
+/**
+ * @author ITHSivju
+ */
 public class TeacherJpaController implements Serializable, TeacherDAO {
 
     public TeacherJpaController(EntityManagerFactory emf) {
