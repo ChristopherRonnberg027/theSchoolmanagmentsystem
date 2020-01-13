@@ -185,14 +185,14 @@ public class dbControlJpaImpl implements dbDAO {
     }
 
     @Override
-    public List<Student> findStudentByFirstName(String firstName) {
-        return studentController.findStudentByFirstName(firstName);
+    public List<Student> findStudentByName(String name) {
+        return studentController.findStudentByName(name);
     }
 
-    @Override
-    public List<Student> findStudentBySurName(String surName) {
-        return studentController.findStudentBySurName(surName);
-    }
+//    @Override
+//    public List<Student> findStudentBySurName(String surName) {
+//        return studentController.findStudentBySurName(surName);
+//    }
 
     @Override
     public int getStudentCount() {
@@ -245,14 +245,14 @@ public class dbControlJpaImpl implements dbDAO {
     }
 
     @Override
-    public List<Teacher> findTeacherByFirstName(String firstName) {
-        return teacherControler.findTeacherByFirstName(firstName);
+    public List<Teacher> findTeacherByName(String name) {
+        return teacherControler.findTeacherByName(name);
     }
-
-    @Override
-    public List<Teacher> findTeacherBySurName(String surName) {
-        return teacherControler.findTeacherBySurName(surName);
-    }
+//
+//    @Override
+//    public List<Teacher> findTeacherBySurName(String surName) {
+//        return teacherControler.findTeacherBySurName(surName);
+//    }
 
     @Override
     public int getTeacherCount() {
