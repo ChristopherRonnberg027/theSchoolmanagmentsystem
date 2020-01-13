@@ -14,7 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 
 /**
- * @author Christopher
+ * @author ITHSivju
  */
 @Entity
 public class Course implements Serializable {

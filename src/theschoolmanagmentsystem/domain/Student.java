@@ -11,7 +11,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
-
+/**
+ * @author ITHSivju
+ */
 @Entity
 public class Student implements Serializable {
 

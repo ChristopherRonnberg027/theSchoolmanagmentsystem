@@ -11,6 +11,9 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
+/**
+ * @author ITHSivju
+ */
 @Entity
 public class Education implements Serializable {
 
