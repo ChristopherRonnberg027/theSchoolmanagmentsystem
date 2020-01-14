@@ -3,6 +3,9 @@ package theschoolmanagmentsystem.domain.exceptions;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author ITHSivju
+ */
 public class IllegalOrphanException extends Exception {
     private List<String> messages;
     public IllegalOrphanException(List<String> messages) {

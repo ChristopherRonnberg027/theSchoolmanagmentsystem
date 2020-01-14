@@ -17,7 +17,7 @@ import theschoolmanagmentsystem.domain.exceptions.NonexistentEntityException;
 
 /**
  *
- * @author I.S.op187
+ * @author ITHSivju
  */
 public class dbControlJpaImpl implements dbDAO {
 

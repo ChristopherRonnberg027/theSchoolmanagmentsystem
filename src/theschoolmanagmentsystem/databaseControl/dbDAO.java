@@ -10,7 +10,7 @@ import theschoolmanagmentsystem.domain.exceptions.NonexistentEntityException;
 
 /**
  * Acces inteface for database
- * @author I.S.op187
+ * @author ITHSivju
  */
 public interface dbDAO {
     

@@ -1,5 +1,8 @@
 package theschoolmanagmentsystem.domain.exceptions;
 
+/**
+ * @author ITHSivju
+ */
 public class PreexistingEntityException extends Exception {
     public PreexistingEntityException(String message, Throwable cause) {
         super(message, cause);
