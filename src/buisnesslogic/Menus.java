@@ -1,9 +1,9 @@
 package buisnesslogic;
 
 import buisnesslogic.userEnvironmentAccess.UserEnviromentAccess;
-import theschoolmanagmentsystem.databaseControl.DbControlJpaImpl;
+import theschoolmanagmentsystem.databaseControl.dbControlJpaImpl;
 import theschoolmanagmentsystem.userEnvironment.UserEnviromentCommandPrImpl;
-import theschoolmanagmentsystem.databaseControl.DbDAO;
+import theschoolmanagmentsystem.databaseControl.dbDAO;
 
 /**
  * Implements menus for running the aplication as stand-alone program. 
@@ -18,7 +18,7 @@ public class Menus {
     //To access user environment use 'ue' variable.
     
     //Instantiates database. In this case it uses local mysql database 
-    DbDAO db = new DbControlJpaImpl();
+    dbDAO db = new dbControlJpaImpl();
     //To access databes use 'db' variable
     
     
