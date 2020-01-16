@@ -1,5 +1,6 @@
-package buisnesslogic.UserEnvironmentAccess;
+package buisnesslogic;
 
+import buisnesslogic.userEnvironmentAccess.UserEnviromentAccess;
 import theschoolmanagmentsystem.databaseControl.DbControlJpaImpl;
 import theschoolmanagmentsystem.userEnvironment.UserEnviromentCommandPrImpl;
 import theschoolmanagmentsystem.databaseControl.DbDAO;

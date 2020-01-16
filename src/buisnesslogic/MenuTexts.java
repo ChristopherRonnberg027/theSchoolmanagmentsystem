@@ -1,4 +1,4 @@
-package buisnesslogic.userEnvironmentAccess;
+package buisnesslogic;
 
 public class MenuTexts {
 
