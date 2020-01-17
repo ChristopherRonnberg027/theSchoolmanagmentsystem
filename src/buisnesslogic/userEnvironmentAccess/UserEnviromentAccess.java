@@ -73,6 +73,8 @@ public interface UserEnviromentAccess {
     /**
      * This is a main input from user. 
      * Use parsing for turning into Numbers.
+     * All inputs are to happen in the same line as textBeforeInput;
+     * F.ex. Name: ________
      * Method getIntFromUser or similar are for JFrame implementations.
      * @param textBeforeInput - Any text to explain the input
      * @return String
