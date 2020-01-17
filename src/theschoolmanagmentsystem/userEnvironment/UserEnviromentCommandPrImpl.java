@@ -31,14 +31,16 @@ public class UserEnviromentCommandPrImpl implements UserEnviromentAccess {
 
     @Override
     public void print(Course courseToPrint) {
-        System.out.printf("%s, %s to %s\n", courseToPrint.getName(),
-                courseToPrint.getStart(), courseToPrint.getEnd());
+        System.out.printf("%s, lasts from %s to %s, schoolbreak %s\n", courseToPrint.getName(),
+                courseToPrint.getStart(), courseToPrint.getEnd(),
+                courseToPrint.getSchoolBreak());
     }
 
     @Override
     public void print(Education educationToPrint) {
-        System.out.printf("%s, %s to %s\n", educationToPrint.getName(),
-                educationToPrint.getStart(), educationToPrint.getEnd());
+        System.out.printf("%s, lasts from %s to %s, schoolbreak %s\n", educationToPrint.getName(),
+                educationToPrint.getStart(), educationToPrint.getEnd(),
+                educationToPrint.getSchoolBreak());
     }
 
     @Override

@@ -75,4 +75,11 @@ public class Teacher implements Serializable {
         getCourses().remove(course);
     }
 
+    @Override
+    public String toString() {
+        return "- Teacher: " + firstName + " " + surName + ", Personal identification number " + pn;
+    }
+    
+    
+
 }

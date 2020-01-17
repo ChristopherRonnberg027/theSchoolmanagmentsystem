@@ -62,4 +62,10 @@ public class Student implements Serializable {
         this.education = education;
     }
 
+    @Override
+    public String toString() {
+        return "- Student: " + firstName + " " + surName + ", Personal identification number " + pn;
+    }
+
+    
 }

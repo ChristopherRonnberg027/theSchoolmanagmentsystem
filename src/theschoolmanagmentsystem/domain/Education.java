@@ -121,4 +121,11 @@ public class Education implements Serializable {
         course.getEducations().remove(this);
     }
 
+    @Override
+    public String toString() {
+        return "- Education: " + name + ", lasts from " + start + " to " + end + ", schoolBreak " + schoolBreak;
+    }
+    
+    
+
 }
