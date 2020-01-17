@@ -16,6 +16,7 @@ import theschoolmanagmentsystem.domain.exceptions.NonexistentEntityException;
  */
 public class CourseJpaController implements Serializable, CourseDAO {
 
+    //TODO implement Logger
     public CourseJpaController(EntityManagerFactory emf) {
         this.emf = emf;
     }
@@ -185,10 +186,15 @@ public class CourseJpaController implements Serializable, CourseDAO {
     }
 
     @Override
-    public Course findCourseById(Long id) {
+    public Course findCourseById(Long id) throws EntityNotFoundException {
+        Course courseToReturn;
         EntityManager em = getEntityManager();
         try {
-            return em.find(Course.class, id);
+            courseToReturn = em.find(Course.class, id);
+            if(courseToReturn!=null)
+                return courseToReturn;
+            else
+                throw new EntityNotFoundException("Entity not found");
         } finally {
             em.close();
         }
@@ -209,12 +215,17 @@ public class CourseJpaController implements Serializable, CourseDAO {
     }
 
     @Override
-    public List<Course> findCourseByName(String name) {
+    public List<Course> findCourseByName(String name) throws EntityNotFoundException{
         EntityManager em = getEntityManager();
+        List<Course> listToReturn;
         try {
             Query query = em.createQuery("Select c FROM Course c WHERE c.name LIKE :name");
             query.setParameter("name", name);
-            return query.getResultList();
+            listToReturn = query.getResultList();
+            if(listToReturn!=null)
+                return listToReturn;
+            else 
+                throw new EntityNotFoundException("There are no courses in database.");
         } finally {
             em.close();
         }

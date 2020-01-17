@@ -1,6 +1,7 @@
 package theschoolmanagmentsystem.domain;
 
 import java.util.List;
+import javax.persistence.EntityNotFoundException;
 import theschoolmanagmentsystem.domain.exceptions.NonexistentEntityException;
 
 /**
@@ -34,7 +35,7 @@ public interface CourseDAO {
      * @param id
      * @return Course
      */
-    public Course findCourseById(Long id);
+    public Course findCourseById(Long id) throws EntityNotFoundException;
 
     /**
      * Returns a List od Courses based on a String parameter.
@@ -42,7 +43,7 @@ public interface CourseDAO {
      * @param name
      * @return List of Course
      */
-    public List<Course> findCourseByName(String name);
+    public List<Course> findCourseByName(String name) throws EntityNotFoundException;
 
     /**
      * Delete a speciffic course
