@@ -120,5 +120,10 @@ public class Course implements Serializable {
     public void removeEducation(Education education) {
         getEducations().remove(education);
     }
+    
+    @Override
+    public String toString() {
+        return "- Course: " + name + ", lasts from " + start + " to " + end + ", schoolBreak " + schoolBreak;
+    }
 
 }
