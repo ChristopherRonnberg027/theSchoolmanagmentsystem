@@ -1,74 +1,117 @@
-
 package theschoolmanagmentsystem.userEnvironment;
 
 import buisnesslogic.userEnvironmentAccess.UserEnviromentAccess;
 import java.util.List;
+import java.util.Scanner;
 import theschoolmanagmentsystem.domain.Course;
 import theschoolmanagmentsystem.domain.Education;
 import theschoolmanagmentsystem.domain.Student;
 import theschoolmanagmentsystem.domain.Teacher;
 
-
-public class UserEnviromentCommandPrImpl implements UserEnviromentAccess{
-
+public class UserEnviromentCommandPrImpl implements UserEnviromentAccess {
+    Scanner sc = new Scanner(System.in);
+    
+    
     @Override
     public void print(Student studentToPrint) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.printf("%s %s, Education: %s, "
+                + "Personal identification number: %d\n",
+                studentToPrint.getFirstName(), studentToPrint.getSurName(),
+                studentToPrint.getEducation().getName(),
+                studentToPrint.getPn());
     }
 
     @Override
     public void print(Teacher teacherToPrint) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.printf("%s %s, "
+                + "Personal identification number: %d\n",
+                teacherToPrint.getFirstName(), teacherToPrint.getSurName(),
+                teacherToPrint.getPn());
     }
 
     @Override
     public void print(Course courseToPrint) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.printf("%s, %s to %s\n", courseToPrint.getName(),
+                courseToPrint.getStart(), courseToPrint.getEnd());
     }
 
     @Override
     public void print(Education educationToPrint) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.printf("%s, %s to %s\n", educationToPrint.getName(),
+                educationToPrint.getStart(), educationToPrint.getEnd());
     }
 
     @Override
     public void printFull(Student studentToPrint) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.print("- Student: ");
+        print(studentToPrint);
+
+        System.out.println("Courses: ");
+        for (Course course : studentToPrint.getEducation().getCourses()) {
+            print(course);
+        }
     }
 
     @Override
     public void printFull(Teacher teacherToPrint) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.print("- Teacher: ");
+        print(teacherToPrint);
+        
+        System.out.println("Courses: ");
+        for (Course course : teacherToPrint.getCourses()) {
+            print(course);
+        }
     }
 
     @Override
     public void printFull(Course courseToPrint) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.print("- Course: ");
+        print(courseToPrint);
+        
+        System.out.println("Teachers: ");
+        for (Teacher teacher : courseToPrint.getTeachers()) {
+            print(teacher);
+        }
     }
 
     @Override
     public void printFull(Education educationToPrint) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.print("- Education: ");
+        print(educationToPrint);
+        
+        System.out.println("Courses: ");
+        for (Course course : educationToPrint.getCourses()) {
+            print(course);
+        }
+        
+        System.out.println("Students: ");
+        for (Student student : educationToPrint.getStudents()) {
+            print(student);
+        }
     }
 
     @Override
     public void printList(List<?> listToPrint) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        for (Object object : listToPrint) {
+            printText(object.toString());
+        }
     }
 
     @Override
     public String getStringInputFromUser(String textBeforeInput) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.print(textBeforeInput);
+        return sc.nextLine();
     }
 
     @Override
     public Integer getIntegerInputFromUser(String textBeforeInput) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.print(textBeforeInput);
+        return sc.nextInt();
     }
 
     @Override
     public void printText(String text) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.println(text);
     }
-    
+
 }
