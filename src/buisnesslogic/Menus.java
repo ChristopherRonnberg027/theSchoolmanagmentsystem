@@ -3,9 +3,13 @@ package buisnesslogic;
 import static buisnesslogic.MenuTexts.coursesMenuText;
 import static buisnesslogic.MenuTexts.editMenuText;
 import static buisnesslogic.MenuTexts.mainMenuText;
+import static buisnesslogic.MenuTexts.setCourseToEducationMenuText;
+import static buisnesslogic.MenuTexts.setEducationToCourseMenuText;
+import static buisnesslogic.MenuTexts.setStudentToEducationMenuText;
 import static buisnesslogic.MenuTexts.studentsMenuText;
 import static buisnesslogic.MenuTexts.teachersMenuText;
 import buisnesslogic.userEnvironmentAccess.UserEnviromentAccess;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -37,28 +41,25 @@ public class Menus {
     //Instantiates
     Utilities utility = new Utilities();
 
-    // TODO implement menus starting from main etc. Main should be
-    // in another class
-    // IN PROGRESS
+    /**
+     * Main menu. Users switches between 5 choices: 1. Course menu. 2. Education
+     * menu. 3. Student menu. 4. Teacher menu 0. Exit application.
+     */
     public void mainMenu() {
         boolean mainLoop = true;
         while (mainLoop) {
             int mainChoice = intInRangeFromUser(0, 4, ue.getIntegerInputFromUser(mainMenuText));
             switch (mainChoice) {
                 case 1:
-                    // X
                     courseMenu();
                     break;
                 case 2:
-                    // education domainMenu()
                     educationMenu();
                     break;
                 case 3:
-                    // X
                     studentMenu();
                     break;
                 case 4:
-                    // X
                     teacherMenu();
                     break;
                 case 0:
@@ -68,7 +69,11 @@ public class Menus {
         }
     }
 
-    // EDUCATION MENU IN PROGRESS
+    /**
+     * Education Menu. Switches between 3 choices: 1. Calls
+     * addNewEducation()-method 2. Calls educationEditMenu()-method 3. Back to
+     * Main Menu
+     */
     public void educationMenu() {
         boolean educationMenuLoop = true;
         while (educationMenuLoop) {
@@ -81,7 +86,7 @@ public class Menus {
                     addNewEducation();
                     break;
                 case 2:
-                    // EDIT EDUCATION
+                    // EDIT EDUCATION INFORMATION MENU
                     educationEditMenu();
                     break;
                 case 0:
@@ -91,7 +96,11 @@ public class Menus {
         }
     }
 
-    // DELETE EDUCATION
+    /**
+     * Deletes Education from database. Needs a object of Education to delete
+     *
+     * @param educationToEdit
+     */
     public void deleteEducation(Education educationToEdit) {
         boolean isNotSure = true;
         while (isNotSure) {
@@ -111,7 +120,12 @@ public class Menus {
         }
     }
 
-    // X
+    /**
+     * Edit Education information. Needs an object of Education to edit. Calls
+     * editEducation()-method from database controller
+     *
+     * @param educationToEdit an object of Education
+     */
     public void editEducation(Education educationToEdit) {
         boolean editEducationLoop = true;
         while (editEducationLoop) {
@@ -127,10 +141,18 @@ public class Menus {
                 educationToEdit.setStart(start);
                 educationToEdit.setEnd(end);
                 educationToEdit.setSchoolBreak(schoolBreak);
-
-                //TODO set course and students
-                educationToEdit.setCourses(null);
-                educationToEdit.setStudents(null);
+                Course courseToEducation = setCourseToEducation();
+                if (courseToEducation == null) {
+                    educationToEdit.addCourse(null);
+                } else {
+                    educationToEdit.addCourse(courseToEducation);
+                }
+                Student studentToEducation = setStudentToEducation();
+                if (studentToEducation == null) {
+                    educationToEdit.addStudent(null);
+                } else {
+                    educationToEdit.addStudent(studentToEducation);
+                }
                 try {
                     db.editEducation(educationToEdit);
                 } catch (Exception ex) {
@@ -142,7 +164,31 @@ public class Menus {
         }
     }
 
-    // EDUCATION EDIT 
+    public Student setStudentToEducation() {
+        ue.printText("Add Student to Education");
+        List<Student> studentList = aListOFStudentFromDataBase();
+        ue.printList(studentList);
+        Student studentToEducation = searchAndFindStudent();
+        return studentToEducation;
+    }
+
+    public Course setCourseToEducation() {
+        ue.printText("Add Course to Education");
+        List<Course> courseList = aListOfCoursesFromDataBase();
+        ue.printList(courseList);
+        Course courseToEducation = searchAndFindCourse();
+        return courseToEducation;
+    }
+
+    /**
+     * Education edit menu. User enters id to a Education to edit. Calls the
+     * thereIsAEducation()-method with id from user. Reaturns a object of
+     * Education. Sends back a message if the Education is in the system or not.
+     * If there is a Education, switches between 3 choices: 1. Calls
+     * editEducation()-method with the found Education object as parameter. 2.
+     * Calls deleteCourse()-method with the found Education object as parameter.
+     * 0. Back to Education menu.
+     */
     public void educationEditMenu() {
         boolean educationEditMenuLoop = true;
         while (educationEditMenuLoop) {
@@ -156,7 +202,7 @@ public class Menus {
                 int courseEditMenuChoice = intInRangeFromUser(0, 2, ue.getIntegerInputFromUser(editMenuText));
                 switch (courseEditMenuChoice) {
                     case 1:
-                        // EDIT EDUCATION
+                        // EDIT EDUCATION INFORMATION
                         editEducation(educationToEdit);
                         break;
                     case 2:
@@ -172,7 +218,12 @@ public class Menus {
         }
     }
 
-    // X
+    // SET COURSE, SET STUDENT -NOT FIXED!
+    /**
+     * Add new Education. Creates an Object of Education. Calls
+     * db.createEducation()-method from db-controller.
+     *
+     */
     public void addNewEducation() {
         ue.printText("Add new education");
         Long id = utility.isLongValid(ue.getStringInputFromUser("Education id number: "));
@@ -187,16 +238,30 @@ public class Menus {
             newEducation.setStart(start);
             newEducation.setEnd(end);
             newEducation.setSchoolBreak(schoolBreak);
-            //TODO set course and students
-            newEducation.setCourses(null);
-            newEducation.setStudents(null);
+            Course courseToEducation = setCourseToEducation();
+            if (courseToEducation == null) {
+                newEducation.addCourse(null);
+            } else {
+                newEducation.addCourse(courseToEducation);
+            }
+            Student studentToEducation = setStudentToEducation();
+            if (studentToEducation == null) {
+                newEducation.addStudent(null);
+            } else {
+                newEducation.addStudent(studentToEducation);
+            }
+
             db.createEducation(newEducation);
         } else {
             ue.printText("Course already in system");
         }
     }
 
-    // COURSE MENU
+//////////////////////////////////////////////////
+    /**
+     * Course Menu. Switches between 3 choices: 1. Calls addNewCourse()-method
+     * 2. Calls courseEditMenu()-method 3. Back to Main Menu
+     */
     public void courseMenu() {
         boolean courseMenuLoop = true;
         while (courseMenuLoop) {
@@ -205,9 +270,11 @@ public class Menus {
             int courseMenuChoice = intInRangeFromUser(0, 2, ue.getIntegerInputFromUser(coursesMenuText));
             switch (courseMenuChoice) {
                 case 1:
+                    // ADD NEW COURSE
                     addNewCourse();
                     break;
                 case 2:
+                    // EDIT COURSE INFORMATION MENU
                     courseEditMenu();
                     break;
                 case 0:
@@ -217,7 +284,14 @@ public class Menus {
         }
     }
 
-    // EDIT COURSE MENU
+    /**
+     * Course edit menu. User enters id to a Course to edit. Calls the
+     * thereIsACourse()-method with id from user. Reaturns a object of Course.
+     * Sends back a message if the Course is in the system or not. If there is a
+     * Course, switches between 3 choices: 1. Calls editCourse()-method with the
+     * found Course object as parameter. 2. Calls deleteCourse()-method with the
+     * found Course object as parameter. 0. Back to Course menu.
+     */
     public void courseEditMenu() {
         boolean courseEditMenuLoop = true;
         while (courseEditMenuLoop) {
@@ -231,7 +305,7 @@ public class Menus {
                 int courseEditMenuChoice = intInRangeFromUser(0, 2, ue.getIntegerInputFromUser(editMenuText));
                 switch (courseEditMenuChoice) {
                     case 1:
-                        // EDIT COURSE
+                        // EDIT COURSE INFORMATION
                         editCourse(courseToEdit);
                         break;
                     case 2:
@@ -246,7 +320,11 @@ public class Menus {
         }
     }
 
-    // DELETE COURSE
+    /**
+     * Deletes course from database. Needs a object of Course to delete
+     *
+     * @param courseToEdit An Object of Course
+     */
     public void deleteCourse(Course courseToEdit) {
         boolean isNotSure = true;
         while (isNotSure) {
@@ -266,7 +344,13 @@ public class Menus {
         }
     }
 
-    // EDIT COURSE
+    // TODO: SET EDUCATION AND COURSES
+    /**
+     * Edit Course information. Needs an object of Course to edit. Calls
+     * editCourse()-method from database controller.
+     *
+     * @param courseToEdit an object of Course.
+     */
     public void editCourse(Course courseToEdit) {
         boolean editCourseLoop = true;
         while (editCourseLoop) {
@@ -298,7 +382,12 @@ public class Menus {
         }
     }
 
-    // ADD NEW COURSE
+    // TODO: SET EDUCATIONS AND TEACHERS
+    /**
+     * Add new Course. Creates an Object of Course. Calls
+     * db.createCourse()-method from db-controller.
+     *
+     */
     public void addNewCourse() {
         ue.printText("Add new course");
         Long id = utility.isLongValid(ue.getStringInputFromUser("Id number: "));
@@ -313,6 +402,7 @@ public class Menus {
             newCourse.setStart(start);
             newCourse.setEnd(end);
             newCourse.setSchoolBreak(schoolBreak);
+
             //TODO set educations and courses
             newCourse.setEducations(null);
             newCourse.setTeachers(null);
@@ -322,7 +412,11 @@ public class Menus {
         }
     }
 
-    // TEACHER MENU
+//////////////////////////////////////////////////
+    /**
+     * Teacher Menu. Switches between 3 choices: 1. Calls addNewTeacher()-method
+     * 2. Calls teacherEditMenu()-method 3. Back to Main Menu
+     */
     public void teacherMenu() {
         boolean teacherMenuLoop = true;
         while (teacherMenuLoop) {
@@ -335,7 +429,7 @@ public class Menus {
                     addNewTeacher();
                     break;
                 case 2:
-                    // EDIT TEACHER MENU
+                    // EDIT TEACHER INFORMATION MENU
                     teacherEditMenu();
                     break;
                 case 0:
@@ -345,7 +439,14 @@ public class Menus {
         }
     }
 
-    // EDIT TEACHER MENU X
+    /**
+     * Teacher edit menu. User enters id to a Teacher to edit. Calls the
+     * thereIsATeacher()-method with id from user. Reaturns a object of Teacher.
+     * Sends back a message if the Teacher is in the system or not. If there is
+     * a Teacher, switches between 3 choices: 1. Calls editTeacher()-method with
+     * the found Teacher object as parameter. 2. Calls deleteTeacher()-method
+     * with the found Teacher object as parameter. 0. Back to Teacher menu.
+     */
     public void teacherEditMenu() {
         boolean teacherEditMenuLoop = true;
         while (teacherEditMenuLoop) {
@@ -359,7 +460,7 @@ public class Menus {
                 int teacherEditMenuChoice = intInRangeFromUser(0, 2, ue.getIntegerInputFromUser(editMenuText));
                 switch (teacherEditMenuChoice) {
                     case 1:
-                        // EDIT TEACHER
+                        // EDIT TEACHER INFORMATION
                         editTeacher(teacherToEdit);
                         break;
                     case 2:
@@ -375,7 +476,11 @@ public class Menus {
         }
     }
 
-    // DELETE TEACHER
+    /**
+     * Deletes Teacher from database. Needs a object of Teacher to delete
+     *
+     * @param teacherToEdit
+     */
     public void deleteTeacher(Teacher teacherToEdit) {
         boolean isNotSure = true;
         while (isNotSure) {
@@ -396,7 +501,13 @@ public class Menus {
         }
     }
 
-    // EDIT TEACHER
+    // TODO: set courses
+    /**
+     * Edit Teacher information. Needs an object of Teacher to edit. Calls
+     * editTeacher()-method from database controller.
+     *
+     * @param teacherToEdit an object of Teacher.
+     */
     public void editTeacher(Teacher teacherToEdit) {
         boolean editTeacherLoop = true;
         while (editTeacherLoop) {
@@ -422,7 +533,12 @@ public class Menus {
         }
     }
 
-    // ADD NEW TEACHER X
+    // TODO: SET COURSES  
+    /**
+     * Add new Teacher. Creates an Object of Teacher. Calls
+     * db.createTeacher()-method from db-controller.
+     *
+     */
     public void addNewTeacher() {
         ue.printText("Add new Teacher");
         Long pn = utility.isLongValid(ue.getStringInputFromUser("Person number: "));
@@ -440,8 +556,12 @@ public class Menus {
             ue.printText("Teacher already in system");
         }
     }
+//////////////////////////////////////////////////
 
-    // STUDENT MENU X
+    /**
+     * Student Menu. Switches between 3 choices: 1. Calls addNewStudent()-method
+     * 2. Calls studentEditMenu()-method 3. Back to Main Menu
+     */
     public void studentMenu() {
         boolean studentMenuLoop = true;
         while (studentMenuLoop) {
@@ -450,9 +570,11 @@ public class Menus {
             int studentMenuChoice = intInRangeFromUser(0, 2, ue.getIntegerInputFromUser(studentsMenuText));
             switch (studentMenuChoice) {
                 case 1:
+                    // ADD NEW STUDENT
                     addNewStudent();
                     break;
                 case 2:
+                    // EDIT STUDENT INFORMATION MENU
                     studentEditMenu();
                     break;
                 case 0:
@@ -462,7 +584,14 @@ public class Menus {
         }
     }
 
-    // EDIT STUDENT MENU X
+    /**
+     * Student edit menu. User enters id to a Student to edit. Calls the
+     * thereIsAStudent()-method with id from user. Reaturns a object of Student.
+     * Sends back a message if the Student is in the system or not. If there is
+     * a Student, switches between 3 choices: 1. Calls editStudent()-method with
+     * the found Student object as parameter. 2. Calls deleteStudent()-method
+     * with the found Student object as parameter. 0. Back to Student menu.
+     */
     public void studentEditMenu() {
         boolean studentEditMenuLoop = true;
         while (studentEditMenuLoop) {
@@ -476,11 +605,11 @@ public class Menus {
                 int studentEditMenuChoice = intInRangeFromUser(0, 2, ue.getIntegerInputFromUser(editMenuText));
                 switch (studentEditMenuChoice) {
                     case 1:
-                        // setMenu
+                        // EDIT STUDENT INFORMATION
                         editStudent(studentToEdit);
                         break;
                     case 2:
-                        // deletemenu
+                        // DELETE STUDENT
                         deleteStudent(studentToEdit);
                         studentEditMenuLoop = false;
                         break;
@@ -493,7 +622,11 @@ public class Menus {
         }
     }
 
-    // DELETE STUDENT
+    /**
+     * Deletes Student from database. Needs a object of Student to delete
+     *
+     * @param studentToEdit
+     */
     public void deleteStudent(Student studentToEdit) {
         boolean isNotSure = true;
         while (isNotSure) {
@@ -514,7 +647,13 @@ public class Menus {
         }
     }
 
-    // EDIT STUDENT
+    // TODO: Set education
+    /**
+     * Edit Student information. Needs an object of Student to edit. Calls
+     * editStudent()-method from database controller.
+     *
+     * @param studentToEdit an object of Student.
+     */
     public void editStudent(Student studentToEdit) {
         boolean editStudentLoop = true;
         while (editStudentLoop) {
@@ -540,7 +679,12 @@ public class Menus {
         }
     }
 
-    // ADD NEW STUDENT X
+    // TODO: SET EDUCATION
+    /**
+     * Add new Student. Creates an Object of Student. Calls
+     * db.createStudent()-method from db-controller.
+     *
+     */
     public void addNewStudent() {
         ue.printText("Add new Student");
         Long pn = utility.isLongValid(ue.getStringInputFromUser("Person number: "));
@@ -557,52 +701,17 @@ public class Menus {
             ue.printText("Student already in system");
         }
     }
+/////////////////////////////////////////////////
 
-    // X
-    public Education thereIsAlreadyAEducation(Long id) {
-        Education foundEducation = db.findEducationById(id);
-        if (foundEducation == null) {
-            ue.printText("No such education");
-        } else {
-            return foundEducation;
-        }
-        return null;
-    }
-
-    // X
-    public Course thereIsAlreadyACourse(Long id) {
-        Course foundCourse = db.findCourseById(id);
-        if (foundCourse == null) {
-            ue.printText("No such course");
-        } else {
-            return foundCourse;
-        }
-        return null;
-    }
-
-    // X
-    public Teacher thereIsAlreadyATeacher(Long pn) {
-        Teacher foundTeacher = db.findTeacherById(pn);
-        if (foundTeacher == null) {
-            ue.printText("No such teacher");
-        } else {
-            return foundTeacher;
-        }
-        return null;
-    }
-
-    // X
-    public Student thereIsAlreadyAStudent(Long pn) {
-        Student foundStudent = db.findStudentById(pn);
-        if (foundStudent == null) {
-            ue.printText("No such student");
-        } else {
-            return foundStudent;
-        }
-        return null;
-    }
-
-    // X
+    /**
+     * Checks to see if user input is in range of menu choice. Takes an integer
+     * from user and 2 integers to narrow the choices.
+     *
+     * @param min is the minimum integer input.
+     * @param max is the maximum integer input.
+     * @param userInPut takes an integer from user.
+     * @return an integer in range of menu choices.
+     */
     public int intInRangeFromUser(int min, int max, int userInPut) {
         int inRange = - 1;
         try {
@@ -618,5 +727,503 @@ public class Menus {
         }
         return inRange;
     }
+/////////////////////////////////////////////////
+/////////////////////////////////////////////////
+/////////////////////////////////////////////////
+/////////////////////////////////////////////////
+/////////////////////////////////////////////////
+/////////////////////////////////////////////////
+/////////////////////////////////////////////////
+/////////////////////////////////////////////////
+/////////////////////////////////////////////////
+/////////////////////////////////////////////////
+    //////////////////////////////////////////////
+    // EN MASSA METODER SOM PRINTAR UT LISTOR ELLER OBJECT
+    // 
+    //
+    //
+    //
+    //
+    //
+    //
 
+    /**
+     * Searching after a course in database
+     *
+     * @return an object of Course
+     */
+    public Course searchAndFindCourse() {
+        Long courseId = utility.isLongValid(ue.getStringInputFromUser("Enter Course id number: "));
+        Course courseFromDb = db.findCourseById(courseId);
+        Course educationToCourse = thereIsAlreadyACourse(courseId);
+        return educationToCourse;
+    }
+
+    /**
+     * Searching after a student in database
+     *
+     * @return an object of Student
+     */
+    public Student searchAndFindStudent() {
+        Long pn = utility.isLongValid(ue.getStringInputFromUser("Enter Student person number: "));
+        Student studentFromDb = db.findStudentById(pn);
+        Student student = thereIsAlreadyAStudent(pn);
+        return student;
+    }
+
+    /**
+     * Searching a education in database
+     *
+     * @return an object of Education
+     */
+    public Education searchAndFindEducation() {
+        Long educationId = utility.isLongValid(ue.getStringInputFromUser("Enter Education id number: "));
+        Education educationFromDb = db.findEducationById(educationId);
+        Education setEducationToCourse = thereIsAlreadyAEducation(educationId);
+        return setEducationToCourse;
+    }
+
+    /**
+     * Searching a teacher in database
+     *
+     * @return an object of Teacher
+     */
+    public Teacher searchAndFindTeacher() {
+        Long pn = utility.isLongValid(ue.getStringInputFromUser("Enter Teacher person number: "));
+        Teacher teacherFromDb = db.findTeacherById(pn);
+        Teacher teacher = thereIsAlreadyATeacher(pn);
+        return teacher;
+    }
+
+    /**
+     * Checks to see if there already is a Education in the system. Takes an
+     * Long as id search in database. Calls the findEducationById()-method from
+     * dbController.
+     *
+     * @param id Long from user input.
+     * @return if there is a Education, it returns a full object of Education,
+     * else a null object.
+     */
+    public Education thereIsAlreadyAEducation(Long id) {
+        Education foundEducation = db.findEducationById(id);
+        if (foundEducation == null) {
+            ue.printText("No such education");
+        } else {
+            return foundEducation;
+        }
+        return null;
+    }
+
+    /**
+     * Checks to see if there already is a Course in the system. Takes an Long
+     * as id search in database. Calls the findCourseById()-method from
+     * dbController.
+     *
+     * @param id Long from user input.
+     * @return if there is a Course, it returns a full object of Course, else a
+     * null object.
+     */
+    public Course thereIsAlreadyACourse(Long id) {
+        Course foundCourse = db.findCourseById(id);
+        if (foundCourse == null) {
+            ue.printText("No such course");
+        } else {
+            return foundCourse;
+        }
+        return null;
+    }
+
+    /**
+     * Checks to see if there already is a Teacher in the system. Takes an Long
+     * as id search in database. Calls the findTeacherById()-method from
+     * dbController.
+     *
+     * @param pn Long from user input.
+     * @return if there is a Teacher, it returns a full object of Teacher, else
+     * a null object.
+     */
+    public Teacher thereIsAlreadyATeacher(Long pn) {
+        Teacher foundTeacher = db.findTeacherById(pn);
+        if (foundTeacher == null) {
+            ue.printText("No such teacher");
+        } else {
+            return foundTeacher;
+        }
+        return null;
+    }
+
+    /**
+     * Checks to see if there already is a Student in the system. Takes an Long
+     * as id search in database. Calls the findStudentById()-method from
+     * dbController.
+     *
+     * @param pn an Long as id from user input
+     * @return if there is a Student, it returns a full object of Student, else
+     * a null object.
+     */
+    public Student thereIsAlreadyAStudent(Long pn) {
+        Student foundStudent = db.findStudentById(pn);
+        if (foundStudent == null) {
+            ue.printText("No such student");
+        } else {
+            return foundStudent;
+        }
+        return null;
+    }
+
+    /**
+     * Creates a list of Students from all students in database
+     *
+     * @return a list of Students
+     */
+    public List<Student> aListOFStudentFromDataBase() {
+        List<Student> listOfStudents = db.getAllStudents();
+        return listOfStudents;
+    }
+
+    /**
+     * Creates a list of EDUCATIONS from all educations in database
+     *
+     * @return a list of Educations
+     */
+    public List<Education> aListOfEducationsFromDataBase() {
+        List<Education> listOfEducations = db.getAllEducations();
+        return listOfEducations;
+    }
+
+    /**
+     * Creates a list of Teachers from all teachers in database
+     *
+     * @return a list of Teachers
+     */
+    public List<Teacher> aListOfTeachersFromDataBase() {
+        List<Teacher> listOfTeachers = db.getAllTeachers();
+        return listOfTeachers;
+    }
+
+    /**
+     * Creates a list of Courses from all courses in database
+     *
+     * @return a list of Courses
+     */
+    public List<Course> aListOfCoursesFromDataBase() {
+        List<Course> listOfCourses = db.getAllCourses();
+        return listOfCourses;
+    }
+
+//
+    //
+    //
+    //
+    // SKRÄP/ELLER INTE
+    /**
+     * Creates a list of students. 1. Adds students with input from user. 2.
+     * Creates new student 0. Exit add student to education.
+     *
+     * @return a list of student
+     */
+    public List<Student> addStudentToEducation() {
+        boolean addStudentToEducationLoop = true;
+        List<Student> listOfStudentToAdd = new ArrayList<>();
+        while (addStudentToEducationLoop) {
+            List<Student> listOfStudent = db.getAllStudents();
+            ue.printList(listOfStudent);
+            int addStudentToEducationChoice = intInRangeFromUser(0, 2, ue.getIntegerInputFromUser(setStudentToEducationMenuText));
+            switch (addStudentToEducationChoice) {
+                case 1:
+                    // Add Student to education
+                    boolean addMore = true;
+                    while (addMore) {
+                        Long id = utility.isLongValid(ue.getStringInputFromUser("Enter student id: "));
+                        Student addStudent = thereIsAlreadyAStudent(id);
+                        if (addStudent == null) {
+                            String answer = utility.isStringValid(ue.getStringInputFromUser("Try again? Yes/No"));
+                            if (answer.equalsIgnoreCase("no")) {
+                                addMore = false;
+                            }
+                        }
+                        listOfStudentToAdd.add(addStudent);
+                    }
+                    break;
+                case 2:
+                    // Creates new Course
+                    addNewCourse();
+                    break;
+                case 0:
+                    // BAck to 
+                    addStudentToEducationLoop = false;
+                    break;
+            }
+
+        }
+        return listOfStudentToAdd;
+    }
+
+    /**
+     * Creates a list of course. 1. Adds courses with input from user. 2.
+     * Creates new course 0. Exit add course to education.
+     *
+     * @return a list of Courses
+     */
+    public List<Course> addCourseToEducation() {
+        boolean addCourseToEducationLoop = true;
+        List<Course> listOfCourseToAdd = new ArrayList<>();
+        while (addCourseToEducationLoop) {
+            List<Course> listOfCourses = db.getAllCourses();
+            ue.printList(listOfCourses);
+            int addCourseToEducationChoice = intInRangeFromUser(0, 2, ue.getIntegerInputFromUser(setCourseToEducationMenuText));
+            switch (addCourseToEducationChoice) {
+                case 1:
+                    // Add course to education
+                    boolean addMore = true;
+                    while (addMore) {
+                        Long id = utility.isLongValid(ue.getStringInputFromUser("Enter course id: "));
+                        Course addCourse = thereIsAlreadyACourse(id);
+                        if (addCourse == null) {
+                            String answer = utility.isStringValid(ue.getStringInputFromUser("Try again? Yes/No"));
+                            if (answer.equalsIgnoreCase("no")) {
+                                addMore = false;
+                            }
+                        }
+                        listOfCourseToAdd.add(addCourse);
+                    }
+                    break;
+                case 2:
+                    // Creates new Course
+                    addNewCourse();
+                    break;
+                case 0:
+                    // BAck to 
+                    addCourseToEducationLoop = false;
+                    break;
+            }
+
+        }
+        return listOfCourseToAdd;
+    }
+
+//    // ONÖDIG?
+//    /**
+//     * A menu for setting course to education and education to course
+//     *
+//     */
+//    public void setEducationToCourseMenu() {
+//        boolean setEducationToCourseMenuLoop = true;
+//        while (setEducationToCourseMenuLoop) {
+//            List<Education> listOfAllEducations = aListOfEducationsFromDataBase();
+//            List<Course> listOfAllCourses = aListOfCoursesFromDataBase();
+//
+//            ue.printList(listOfAllEducations);
+//            ue.printList(listOfAllCourses);
+//
+//            int setEducationToCourseMenuChoice = intInRangeFromUser(0, 2, ue.getIntegerInputFromUser(setEducationToCourseMenuText));
+//            switch (setEducationToCourseMenuChoice) {
+//                case 1:
+//                    // SET EDUCATION TO COURSE
+//                    setEducationToCourse();
+//                    break;
+//                case 2:
+//                    // SET COURSE TO EDUCATION
+//                    setCourseToEducation();
+//                    break;
+//                case 0:
+//                    setEducationToCourseMenuLoop = false;
+//                    break;
+//            }
+//        }
+//
+//    }
+//    //////////////////////////////////////////////////
+//    // SETS ////////////////////////////////////////
+//    /**
+//     * Sets a Education to course
+//     */
+//    public void educationToCourse() {
+//        boolean setEducationToCourseLoop = true;
+//        while (setEducationToCourseLoop) {
+//            Education setEducationToCourse = searchAndFindEducation();
+//            if (setEducationToCourse == null) {
+//                setEducationToCourseLoop = false;
+//            } else {
+//                Course educationToCourse = searchAndFindCourse();
+//                if (educationToCourse == null) {
+//                    setEducationToCourseLoop = false;
+//                } else {
+//                    setEducationToCourse.addCourse(educationToCourse);
+//                    educationToCourse.addEducation(setEducationToCourse);
+//
+//                    try {
+//                        db.editEducation(setEducationToCourse);
+//                    } catch (Exception ex) {
+//                        Logger.getLogger(Menus.class.getName()).log(Level.SEVERE, null, ex);
+//                    }
+//
+//                    ue.printText("Education is set to course");
+//                    setEducationToCourseLoop = false;
+//                }
+//            }
+//        }
+//    }
+//
+//    /**
+//     * Sets a Course to Education.
+//     *
+//     */
+//    public void courseToEducation() {
+//        boolean setCourseToEducationLoop = true;
+//        while (setCourseToEducationLoop) {
+//
+//            Course educationToCourse = searchAndFindCourse();
+//            if (educationToCourse == null) {
+//                setCourseToEducationLoop = false;
+//            } else {
+//
+//                Education setEducationToCourse = searchAndFindEducation();
+//                if (setEducationToCourse == null) {
+//                    setCourseToEducationLoop = false;
+//                } else {
+//                    setEducationToCourse.addCourse(educationToCourse);
+//                    educationToCourse.addEducation(setEducationToCourse);
+//
+//                    try {
+//                        db.editEducation(setEducationToCourse);
+//                    } catch (Exception ex) {
+//                        Logger.getLogger(Menus.class.getName()).log(Level.SEVERE, null, ex);
+//                    }
+//
+//                    ue.printText("Course is set to education");
+//                    setCourseToEducationLoop = false;
+//                }
+//            }
+//        }
+//    }
+//
+//    /**
+//     * Sets a Education to student
+//     */
+//    public void educationToStudent() {
+//        boolean setEducationToStudentLoop = true;
+//        while (setEducationToStudentLoop) {
+//            Education setEducationToStudent = searchAndFindEducation();
+//            if (setEducationToStudent == null) {
+//                setEducationToStudentLoop = false;
+//            } else {
+//                Student studentToEducation = searchAndFindStudent();
+//                if (studentToEducation == null) {
+//                    setEducationToStudentLoop = false;
+//                } else {
+//
+//                    setEducationToStudent.addStudent(studentToEducation);
+//                    studentToEducation.setEducation(setEducationToStudent);
+//
+//                    try {
+//                        db.editEducation(setEducationToStudent);
+//                    } catch (Exception ex) {
+//                        Logger.getLogger(Menus.class.getName()).log(Level.SEVERE, null, ex);
+//                    }
+//
+//                    ue.printText("Education is set to course");
+//                    setEducationToStudentLoop = false;
+//                }
+//            }
+//        }
+//    }
+//
+//    /**
+//     * Sets a Student to Education.
+//     *
+//     */
+//    public void studentToEducation() {
+//        boolean setStudentToEducationLoop = true;
+//        while (setStudentToEducationLoop) {
+//
+//            Student studentToEducation = searchAndFindStudent();
+//            if (studentToEducation == null) {
+//                setStudentToEducationLoop = false;
+//            } else {
+//                Education setEducationToStudent = searchAndFindEducation();
+//                if (setEducationToStudent == null) {
+//                    setStudentToEducationLoop = false;
+//                } else {
+//                    setEducationToStudent.addStudent(studentToEducation);
+//                    studentToEducation.setEducation(setEducationToStudent);
+//
+//                    try {
+//                        db.editStudent(studentToEducation);
+//                    } catch (Exception ex) {
+//                        Logger.getLogger(Menus.class.getName()).log(Level.SEVERE, null, ex);
+//                    }
+//
+//                    ue.printText("Student is set to education");
+//                    setStudentToEducationLoop = false;
+//                }
+//            }
+//        }
+//    }
+//
+//    /**
+//     * Sets a Course to Teacher.
+//     *
+//     */
+//    public void courseToTeacher() {
+//        boolean setCourseToTeacherLoop = true;
+//        while (setCourseToTeacherLoop) {
+//
+//            Course courseToTeacher = searchAndFindCourse();
+//            if (courseToTeacher == null) {
+//                setCourseToTeacherLoop = false;
+//            } else {
+//                Teacher teacherToCourse = searchAndFindTeacher();
+//                if (teacherToCourse == null) {
+//                    setCourseToTeacherLoop = false;
+//                } else {
+//                    courseToTeacher.addTeacher(teacherToCourse);
+//                    teacherToCourse.addCourse(courseToTeacher);
+//
+//                    try {
+//                        db.editCourse(courseToTeacher);
+//                    } catch (Exception ex) {
+//                        Logger.getLogger(Menus.class.getName()).log(Level.SEVERE, null, ex);
+//                    }
+//
+//                    ue.printText("Course is set to Teacher");
+//                    setCourseToTeacherLoop = false;
+//                }
+//            }
+//        }
+//    }
+//
+//    /**
+//     * Sets a Teacher to Course.
+//     *
+//     */
+//    public void teacherToCourse() {
+//        boolean setTeacherToCourseLoop = true;
+//        while (setTeacherToCourseLoop) {
+//
+//            Teacher teacherToCourse = searchAndFindTeacher();
+//            if (teacherToCourse == null) {
+//                setTeacherToCourseLoop = false;
+//            } else {
+//
+//                Course courseToTeacher = searchAndFindCourse();
+//                if (courseToTeacher == null) {
+//                    setTeacherToCourseLoop = false;
+//                } else {
+//                    courseToTeacher.addTeacher(teacherToCourse);
+//                    teacherToCourse.addCourse(courseToTeacher);
+//
+//                    try {
+//                        db.editTeacher(teacherToCourse);
+//                    } catch (Exception ex) {
+//                        Logger.getLogger(Menus.class.getName()).log(Level.SEVERE, null, ex);
+//                    }
+//                    ue.printText("Teacher is set to Course");
+//                    setTeacherToCourseLoop = false;
+//                }
+//            }
+//        }
+//    }
+////    
+////////////////////////////////////////////////////
 }
