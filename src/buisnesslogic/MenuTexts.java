@@ -34,7 +34,7 @@ public class MenuTexts {
             = "\n1. Edit"
             + "\n2. Delete"
             + "\n0. Back";
-    
+
     public static final String setCourseToEducationMenuText
             = "\n1. Enter Course id to add"
             + "\n2. Create new Course"
@@ -47,4 +47,8 @@ public class MenuTexts {
             = "\n1. Set Education to Course"
             + "\n2. Set Course to Education"
             + "\n0. Back";
+    public static final String enterIdToAddMenuText
+            = "Enter id to add";
+    public static final String enterPnToAddMenuText
+            = "Enter person number to add";
 }
