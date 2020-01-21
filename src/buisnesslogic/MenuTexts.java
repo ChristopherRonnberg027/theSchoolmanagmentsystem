@@ -35,20 +35,17 @@ public class MenuTexts {
             + "\n2. Delete"
             + "\n0. Back";
 
-    public static final String setCourseToEducationMenuText
-            = "\n1. Enter Course id to add"
-            + "\n2. Create new Course"
-            + "\n0. Exit";
-    public static final String setStudentToEducationMenuText
-            = "\n1. Enter Student id to add"
-            + "\n2. Create new Student"
-            + "\n0. Exit";
-    public static final String setEducationToCourseMenuText
-            = "\n1. Set Education to Course"
-            + "\n2. Set Course to Education"
-            + "\n0. Back";
     public static final String enterIdToAddMenuText
             = "Enter id to add";
     public static final String enterPnToAddMenuText
             = "Enter person number to add";
+    
+    
+    public static final String statMenuTexts
+            = "--Stat Menu--"
+            + "\n1."
+            + "\n2."
+            + "\n3."
+            + "\n4."
+            + "\n0. Back";
 }
