@@ -2,16 +2,14 @@ package buisnesslogic;
 
 import static buisnesslogic.MenuTexts.coursesMenuText;
 import static buisnesslogic.MenuTexts.editMenuText;
+import static buisnesslogic.MenuTexts.educationMenuText;
 import static buisnesslogic.MenuTexts.enterIdToAddMenuText;
 import static buisnesslogic.MenuTexts.enterPnToAddMenuText;
 import static buisnesslogic.MenuTexts.mainMenuText;
-import static buisnesslogic.MenuTexts.setCourseToEducationMenuText;
-import static buisnesslogic.MenuTexts.setEducationToCourseMenuText;
-import static buisnesslogic.MenuTexts.setStudentToEducationMenuText;
+import static buisnesslogic.MenuTexts.statMenuTexts;
 import static buisnesslogic.MenuTexts.studentsMenuText;
 import static buisnesslogic.MenuTexts.teachersMenuText;
 import buisnesslogic.userEnvironmentAccess.UserEnviromentAccess;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -41,7 +39,7 @@ public class Menus {
     //To access databes use 'db' variable
 
     //Instantiates utility class
-    Utilities utility = new Utilities();
+    //Utilities utility = new Utilities();
 
     /**
      * Main menu. Users switches between 5 choices: 1. Course menu. 2. Education
@@ -64,8 +62,34 @@ public class Menus {
                 case 4:
                     teacherMenu();
                     break;
+//                case 5:
+//                    // STAT MENU?
+//                    break;
                 case 0:
                     mainLoop = false;
+                    break;
+            }
+        }
+    }
+
+    /**
+     * Stat menu
+     */
+    public void statMenu() {
+        boolean statMenuLoop = true;
+        while (statMenuLoop) {
+            int statMenuChoice = intInRangeFromUser(0, 4, ue.getIntegerInputFromUser(statMenuTexts));
+            switch (statMenuChoice) {
+                case 1:
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    break;
+                case 4:
+                    break;
+                case 0:
+                    statMenuLoop = false;
                     break;
             }
         }
@@ -81,7 +105,7 @@ public class Menus {
         while (educationMenuLoop) {
             List<Education> listOfEducations = aListOfEducationsFromDataBase();
             ue.printList(listOfEducations);
-            int educationMenuChoice = intInRangeFromUser(0, 2, ue.getIntegerInputFromUser(editMenuText));
+            int educationMenuChoice = intInRangeFromUser(0, 2, ue.getIntegerInputFromUser(educationMenuText));
             switch (educationMenuChoice) {
                 case 1:
                     // ADD NEW EDUCATION
@@ -101,16 +125,16 @@ public class Menus {
     /**
      * Deletes Education from database. Needs a object of Education to delete
      *
-     * @param educationToEdit
+     * @param educationToDelete
      */
-    public void deleteEducation(Education educationToEdit) {
+    public void deleteEducation(Education educationToDelete) {
         boolean isNotSure = true;
         while (isNotSure) {
-            String answer = utility.isStringValid(ue.getStringInputFromUser("Delete "
-                    + educationToEdit.getName() + "? yes/no?"));
+            ue.printText("Delete Education?");
+            String answer = stringInputYesNo();
             if (answer.equalsIgnoreCase("yes")) {
                 try {
-                    db.destroyEducation(educationToEdit);
+                    db.destroyEducation(educationToDelete);
                 } catch (NonexistentEntityException ex) {
                     Logger.getLogger(Menus.class.getName()).log(Level.SEVERE, null, ex);
                     ue.printText("Entity not found...");
@@ -129,32 +153,15 @@ public class Menus {
      * @param educationToEdit an object of Education
      */
     public void editEducation(Education educationToEdit) {
+        Long id = educationToEdit.getId();
         boolean editEducationLoop = true;
         while (editEducationLoop) {
-            String answer = utility.isStringValid("Would you like to edit? Yes/No");
+            ue.printText("Edit education?");
+            String answer = stringInputYesNo();
             if (answer.equalsIgnoreCase("no")) {
                 editEducationLoop = false;
             } else {
-                String name = utility.isStringValid(ue.getStringInputFromUser("Education name: "));
-                String start = utility.isStringValid(ue.getStringInputFromUser("Start date: "));
-                String end = utility.isStringValid(ue.getStringInputFromUser("End date: "));
-                String schoolBreak = utility.isStringValid(ue.getStringInputFromUser("School break dates: "));
-                educationToEdit.setName(name);
-                educationToEdit.setStart(start);
-                educationToEdit.setEnd(end);
-                educationToEdit.setSchoolBreak(schoolBreak);
-                Course courseToEducation = printCourseListAndSearchAndCourse();
-                if (courseToEducation == null) {
-                    educationToEdit.addCourse(null);
-                } else {
-                    educationToEdit.addCourse(courseToEducation);
-                }
-                Student studentToEducation = printStudentListAndSearchAndFindStudent();
-                if (studentToEducation == null) {
-                    educationToEdit.addStudent(null);
-                } else {
-                    educationToEdit.addStudent(studentToEducation);
-                }
+                educationToEdit = editEducationInfo(id);
                 try {
                     db.editEducation(educationToEdit);
                 } catch (Exception ex) {
@@ -204,8 +211,8 @@ public class Menus {
     public void educationEditMenu() {
         boolean educationEditMenuLoop = true;
         while (educationEditMenuLoop) {
-            Long id = utility.isLongValid(ue.getStringInputFromUser("Enter education id number: "));
-            Education educationToEdit = thereIsAlreadyAEducation(id);
+            Long id = idInput();
+            Education educationToEdit = db.findEducationById(id);
             if (educationToEdit == null) {
                 ue.printText("No such education with that id");
                 educationEditMenuLoop = false;
@@ -237,38 +244,51 @@ public class Menus {
      */
     public void addNewEducation() {
         ue.printText("Add new education");
-        Long id = utility.isLongValid(ue.getStringInputFromUser("Education id number: "));
-        Education newEducation = thereIsAlreadyAEducation(id);
-        if (newEducation == null) {
-            newEducation.setId(id);
-            String name = utility.isStringValid(ue.getStringInputFromUser("Education name: "));
-            String start = utility.isStringValid(ue.getStringInputFromUser("Start date: "));
-            String end = utility.isStringValid(ue.getStringInputFromUser("End date: "));
-            String schoolBreak = utility.isStringValid(ue.getStringInputFromUser("School break dates: "));
-            newEducation.setName(name);
-            newEducation.setStart(start);
-            newEducation.setEnd(end);
-            newEducation.setSchoolBreak(schoolBreak);
-            Course courseToEducation = printCourseListAndSearchAndCourse();
-            if (courseToEducation == null) {
-                newEducation.addCourse(null);
-            } else {
-                newEducation.addCourse(courseToEducation);
-            }
-            Student studentToEducation = printStudentListAndSearchAndFindStudent();
-            if (studentToEducation == null) {
-                newEducation.addStudent(null);
-            } else {
-                newEducation.addStudent(studentToEducation);
-            }
+        Long id = idInput();
+        Education newOrNotEducation = thereIsAlreadyAEducation(id);
 
+        Education newEducation = (newOrNotEducation == null) ? editEducationInfo(id) : newOrNotEducation;
+
+        if (newEducation != null) {
             db.createEducation(newEducation);
+            ue.printText("New Education added!");
         } else {
-            ue.printText("Course already in system");
+            ue.printText("No Education added..");
         }
     }
 
-//////////////////////////////////////////////////
+    /**
+     * Edit Education information. Call the method with Education id number
+     *
+     * @param id
+     * @return a object of Course
+     */
+    public Education editEducationInfo(Long id) {
+        Education newEducation = new Education();
+        newEducation.setId(id);
+        String name = nameInput();
+        String start = startDateInput();
+        String end = endDateInput();
+        String schoolBreak = schoolBreakInput();
+        newEducation.setName(name);
+        newEducation.setStart(start);
+        newEducation.setEnd(end);
+        newEducation.setSchoolBreak(schoolBreak);
+        Course courseToEducation = printCourseListAndSearchAndCourse();
+        if (courseToEducation == null) {
+            newEducation.addCourse(null);
+        } else {
+            newEducation.addCourse(courseToEducation);
+        }
+        Student studentToEducation = printStudentListAndSearchAndFindStudent();
+        if (studentToEducation == null) {
+            newEducation.addStudent(null);
+        } else {
+            newEducation.addStudent(studentToEducation);
+        }
+        return newEducation;
+    }
+
     /**
      * Course Menu. Switches between 3 choices: 1. Calls addNewCourse()-method
      * 2. Calls courseEditMenu()-method 3. Back to Main Menu
@@ -306,8 +326,8 @@ public class Menus {
     public void courseEditMenu() {
         boolean courseEditMenuLoop = true;
         while (courseEditMenuLoop) {
-            Long id = utility.isLongValid(ue.getStringInputFromUser("Enter course id number: "));
-            Course courseToEdit = thereIsAlreadyACourse(id);
+            Long id = idInput();
+            Course courseToEdit = db.findCourseById(id);
             if (courseToEdit == null) {
                 ue.printText("No such course with that id");
                 courseEditMenuLoop = false;
@@ -334,16 +354,16 @@ public class Menus {
     /**
      * Deletes course from database. Needs a object of Course to delete
      *
-     * @param courseToEdit An Object of Course
+     * @param courseToDelete An Object of Course
      */
-    public void deleteCourse(Course courseToEdit) {
+    public void deleteCourse(Course courseToDelete) {
         boolean isNotSure = true;
         while (isNotSure) {
-            String answer = utility.isStringValid(ue.getStringInputFromUser("Delete "
-                    + courseToEdit.getName() + "? yes/no?"));
+            ue.printText("Delete Course?");
+            String answer = stringInputYesNo();
             if (answer.equalsIgnoreCase("yes")) {
                 try {
-                    db.destroyCourse(courseToEdit);
+                    db.destroyCourse(courseToDelete);
                 } catch (NonexistentEntityException ex) {
                     Logger.getLogger(Menus.class.getName()).log(Level.SEVERE, null, ex);
                     ue.printText("Entity not found...");
@@ -388,34 +408,15 @@ public class Menus {
      * @param courseToEdit an object of Course.
      */
     public void editCourse(Course courseToEdit) {
+        Long id = courseToEdit.getId();
         boolean editCourseLoop = true;
         while (editCourseLoop) {
-            String answer = utility.isStringValid("Would you like to edit? Yes/No");
+            ue.printText("Edit Course?");
+            String answer = stringInputYesNo();
             if (answer.equalsIgnoreCase("no")) {
                 editCourseLoop = false;
             } else {
-                String name = utility.isStringValid(ue.getStringInputFromUser("Course name: "));
-                String start = utility.isStringValid(ue.getStringInputFromUser("Start date: "));
-                String end = utility.isStringValid(ue.getStringInputFromUser("End date: "));
-                String schoolBreak = utility.isStringValid(ue.getStringInputFromUser("School break dates: "));
-                courseToEdit.setName(name);
-                courseToEdit.setStart(start);
-                courseToEdit.setEnd(end);
-                courseToEdit.setSchoolBreak(schoolBreak);
-
-                Education educationToCourse = printEducationListAndSearchAndFindEducation();
-                if (educationToCourse == null) {
-                    courseToEdit.addEducation(null);
-                } else {
-                    courseToEdit.addEducation(educationToCourse);
-                }
-
-                Teacher teacherToCourse = printTeacherListAndSearchAndFindTeacher();
-                if (teacherToCourse == null) {
-                    courseToEdit.addTeacher(null);
-                }
-                courseToEdit.addTeacher(teacherToCourse);
-
+                editCourseInfo(id);
                 try {
                     db.editCourse(courseToEdit);
                 } catch (Exception ex) {
@@ -433,37 +434,53 @@ public class Menus {
      *
      */
     public void addNewCourse() {
-        ue.printText("Add new course");
-        Long id = utility.isLongValid(ue.getStringInputFromUser("Id number: "));
-        Course newCourse = thereIsAlreadyACourse(id);
-        if (newCourse == null) {
-            newCourse.setId(id);
-            String name = utility.isStringValid(ue.getStringInputFromUser("Course name: "));
-            String start = utility.isStringValid(ue.getStringInputFromUser("Start date: "));
-            String end = utility.isStringValid(ue.getStringInputFromUser("End date: "));
-            String schoolBreak = utility.isStringValid(ue.getStringInputFromUser("School break dates: "));
-            newCourse.setName(name);
-            newCourse.setStart(start);
-            newCourse.setEnd(end);
-            newCourse.setSchoolBreak(schoolBreak);
-            Education educationToCourse = printEducationListAndSearchAndFindEducation();
-            if (educationToCourse == null) {
-                newCourse.addEducation(null);
-            } else {
-                newCourse.addEducation(educationToCourse);
-            }
-            Teacher teacherToCourse = printTeacherListAndSearchAndFindTeacher();
-            if (teacherToCourse == null) {
-                newCourse.addTeacher(null);
-            }
-            newCourse.addTeacher(teacherToCourse);
+        ue.printText("Add new Course");
+        Long id = idInput();
+        Course newOrNotCourse = thereIsAlreadyACourse(id);
+
+        Course newCourse = (newOrNotCourse == null) ? editCourseInfo(id) : newOrNotCourse;
+
+        if (newCourse != null) {
             db.createCourse(newCourse);
+            ue.printText("New Course added!");
         } else {
-            ue.printText("Course already in system");
+            ue.printText("No Course added");
         }
     }
 
-//////////////////////////////////////////////////
+    /**
+     * Edit Course information. Call the method with Course id number
+     *
+     * @param id
+     * @return a object of Course
+     */
+    public Course editCourseInfo(Long id) {
+        Course newCourse = new Course();
+        newCourse.setId(id);
+        String name = nameInput();
+        String start = startDateInput();
+        String end = endDateInput();
+        String schoolBreak = schoolBreakInput();
+
+        newCourse.setName(name);
+        newCourse.setStart(start);
+        newCourse.setEnd(end);
+        newCourse.setSchoolBreak(schoolBreak);
+        Education educationToCourse = printEducationListAndSearchAndFindEducation();
+        if (educationToCourse == null) {
+            newCourse.addEducation(null);
+        } else {
+            newCourse.addEducation(educationToCourse);
+        }
+        Teacher teacherToCourse = printTeacherListAndSearchAndFindTeacher();
+        if (teacherToCourse == null) {
+            newCourse.addTeacher(null);
+        } else {
+            newCourse.addTeacher(teacherToCourse);
+        }
+        return newCourse;
+    }
+
     /**
      * Teacher Menu. Switches between 3 choices: 1. Calls addNewTeacher()-method
      * 2. Calls teacherEditMenu()-method 3. Back to Main Menu
@@ -501,8 +518,8 @@ public class Menus {
     public void teacherEditMenu() {
         boolean teacherEditMenuLoop = true;
         while (teacherEditMenuLoop) {
-            Long pn = utility.isLongValid(ue.getStringInputFromUser("Enter teacher person number to edit: "));
-            Teacher teacherToEdit = thereIsAlreadyATeacher(pn);
+            Long pn = idInput();
+            Teacher teacherToEdit = db.findTeacherById(pn);
             if (teacherToEdit == null) {
                 ue.printText("No teacher whit that person number");
                 teacherEditMenuLoop = false;
@@ -530,17 +547,16 @@ public class Menus {
     /**
      * Deletes Teacher from database. Needs a object of Teacher to delete
      *
-     * @param teacherToEdit
+     * @param teacherToDelete
      */
-    public void deleteTeacher(Teacher teacherToEdit) {
+    public void deleteTeacher(Teacher teacherToDelete) {
         boolean isNotSure = true;
         while (isNotSure) {
-            String answer = utility.isStringValid(ue.getStringInputFromUser("Delete "
-                    + teacherToEdit.getFirstName() + " "
-                    + teacherToEdit.getSurName() + "? yes/no?"));
+            ue.printText("Delete Teacher?");
+            String answer = stringInputYesNo();
             if (answer.equalsIgnoreCase("yes")) {
                 try {
-                    db.destroyTeacher(teacherToEdit);
+                    db.destroyTeacher(teacherToDelete);
                 } catch (NonexistentEntityException ex) {
                     ue.printText("Entity not found");
                     Logger.getLogger(Menus.class.getName()).log(Level.SEVERE, null, ex);
@@ -559,23 +575,15 @@ public class Menus {
      * @param teacherToEdit an object of Teacher.
      */
     public void editTeacher(Teacher teacherToEdit) {
+        Long pn = teacherToEdit.getPn();
         boolean editTeacherLoop = true;
         while (editTeacherLoop) {
-            String answer = utility.isStringValid("Would you like to edit? Yes/No");
+            ue.printText("Edit teacher?");
+            String answer = stringInputYesNo();
             if (answer.equalsIgnoreCase("no")) {
                 editTeacherLoop = false;
             } else {
-                String firstName = utility.isStringValid(ue.getStringInputFromUser("First name: "));
-                String surName = utility.isStringValid(ue.getStringInputFromUser("Sur name: "));
-                teacherToEdit.setFirstName(firstName);
-                teacherToEdit.setSurName(surName);
-
-                Course courseToTeacher = printCourseListAndSearchAndCourse();
-                if (courseToTeacher == null) {
-                    teacherToEdit.addCourse(null);
-                } else {
-                    teacherToEdit.addCourse(courseToTeacher);
-                }
+                teacherToEdit = editTeacherInfo(pn);
                 try {
                     db.editTeacher(teacherToEdit);
                 } catch (Exception ex) {
@@ -594,26 +602,40 @@ public class Menus {
      */
     public void addNewTeacher() {
         ue.printText("Add new Teacher");
-        Long pn = utility.isLongValid(ue.getStringInputFromUser("Person number: "));
-        Teacher newTeacher = thereIsAlreadyATeacher(pn);
-        if (newTeacher == null) {
-            newTeacher.setPn(pn);
-            String firstName = utility.isStringValid(ue.getStringInputFromUser("First name: "));
-            String surName = utility.isStringValid(ue.getStringInputFromUser("Sur name: "));
-            newTeacher.setFirstName(firstName);
-            newTeacher.setSurName(surName);
-            Course courseToTeacher = printCourseListAndSearchAndCourse();
-            if (courseToTeacher == null) {
-                newTeacher.addCourse(null);
-            } else {
-                newTeacher.addCourse(courseToTeacher);
-            }
+        Long pn = personNumberInput();
+        Teacher newOrNotTeacher = thereIsAlreadyATeacher(pn);
+        Teacher newTeacher = (newOrNotTeacher == null) ? editTeacherInfo(pn) : newOrNotTeacher;
+
+        if (newTeacher != null) {
             db.createTeacher(newTeacher);
+            ue.printText("New Teacher added!");
         } else {
-            ue.printText("Teacher already in system");
+            ue.printText("No Teacher added...");
         }
+
     }
-//////////////////////////////////////////////////
+
+    /**
+     * Edit Teacher information. Call the method with Teacher person number
+     *
+     * @param pn
+     * @return a object of Teacher
+     */
+    public Teacher editTeacherInfo(Long pn) {
+        Teacher newTeacher = new Teacher();
+        newTeacher.setPn(pn);
+        String firstName = firstNameInput();
+        String surName = surNameInput();
+        newTeacher.setFirstName(firstName);
+        newTeacher.setSurName(surName);
+        Course courseToTeacher = printCourseListAndSearchAndCourse();
+        if (courseToTeacher == null) {
+            newTeacher.addCourse(null);
+        } else {
+            newTeacher.addCourse(courseToTeacher);
+        }
+        return newTeacher;
+    }
 
     /**
      * Student Menu. Switches between 3 choices: 1. Calls addNewStudent()-method
@@ -652,8 +674,8 @@ public class Menus {
     public void studentEditMenu() {
         boolean studentEditMenuLoop = true;
         while (studentEditMenuLoop) {
-            Long pn = utility.isLongValid(ue.getStringInputFromUser("Enter student person number: "));
-            Student studentToEdit = thereIsAlreadyAStudent(pn);
+            Long pn = personNumberInput();
+            Student studentToEdit = db.findStudentById(pn);
             if (studentToEdit == null) {
                 ue.printText("No student with that person number...");
                 studentEditMenuLoop = false;
@@ -682,17 +704,16 @@ public class Menus {
     /**
      * Deletes Student from database. Needs a object of Student to delete
      *
-     * @param studentToEdit
+     * @param studentToDelete
      */
-    public void deleteStudent(Student studentToEdit) {
+    public void deleteStudent(Student studentToDelete) {
         boolean isNotSure = true;
         while (isNotSure) {
-            String answer = utility.isStringValid(ue.getStringInputFromUser("Delete "
-                    + studentToEdit.getFirstName() + " "
-                    + studentToEdit.getSurName() + "? yes/no?"));
+            ue.printText("Delete student?");
+            String answer = stringInputYesNo();
             if (answer.equalsIgnoreCase("yes")) {
                 try {
-                    db.destroyStudent(studentToEdit);
+                    db.destroyStudent(studentToDelete);
                 } catch (NonexistentEntityException ex) {
                     Logger.getLogger(Menus.class.getName()).log(Level.SEVERE, null, ex);
                     ue.printText("Entity not found...");
@@ -711,23 +732,15 @@ public class Menus {
      * @param studentToEdit an object of Student.
      */
     public void editStudent(Student studentToEdit) {
+        Long pn = studentToEdit.getPn();
         boolean editStudentLoop = true;
         while (editStudentLoop) {
-            String answer = utility.isStringValid("Would you like to edit? Yes/No");
+            ue.printText("Edit student?");
+            String answer = stringInputYesNo();
             if (answer.equalsIgnoreCase("no")) {
                 editStudentLoop = false;
             } else {
-                String firstName = utility.isStringValid(ue.getStringInputFromUser("First name: "));
-                String surName = utility.isStringValid(ue.getStringInputFromUser("Sur name: "));
-                studentToEdit.setFirstName(firstName);
-                studentToEdit.setSurName(surName);
-
-                Education educationToStudent = printEducationListAndSearchAndFindEducation();
-                if (educationToStudent == null) {
-                    studentToEdit.setEducation(null);
-                } else {
-                    studentToEdit.setEducation(educationToStudent);
-                }
+                studentToEdit = editStudentInfo(pn);
                 try {
                     db.editStudent(studentToEdit);
                 } catch (Exception ex) {
@@ -746,26 +759,44 @@ public class Menus {
      */
     public void addNewStudent() {
         ue.printText("Add new Student");
-        Long pn = utility.isLongValid(ue.getStringInputFromUser("Person number: "));
-        Student newStudent = thereIsAlreadyAStudent(pn);
-        if (newStudent == null) {
-            newStudent.setPn(pn);
-            String firstName = utility.isStringValid(ue.getStringInputFromUser("First name: "));
-            String surName = utility.isStringValid(ue.getStringInputFromUser("Sur name: "));
-            newStudent.setFirstName(firstName);
-            newStudent.setSurName(surName);
-            Education educationToStudent = printEducationListAndSearchAndFindEducation();
-            if (educationToStudent == null) {
-                newStudent.setEducation(null);
-            } else {
-                newStudent.setEducation(educationToStudent);
-            }
+        Long pn = personNumberInput();
+
+        Student newOrNotStudent = thereIsAlreadyAStudent(pn);
+
+        Student newStudent = (newOrNotStudent == null) ? editStudentInfo(pn) : newOrNotStudent;
+
+        if (newStudent != null) {
             db.createStudent(newStudent);
+            ue.printText("New student added!");
         } else {
-            ue.printText("Student already in system");
+            ue.printText("No student added...");
         }
     }
-/////////////////////////////////////////////////
+
+    /**
+     * Edit Student information. Call the method with Student person number
+     *
+     * @param pn
+     * @return a object of Student
+     */
+    public Student editStudentInfo(Long pn) {
+        Student newStudent = new Student();
+        newStudent.setPn(pn);
+
+        String firstName = firstNameInput();
+        String surName = surNameInput();
+
+        newStudent.setFirstName(firstName);
+        newStudent.setSurName(surName);
+
+        Education educationToStudent = printEducationListAndSearchAndFindEducation();
+        if (educationToStudent == null) {
+            newStudent.setEducation(null);
+        } else {
+            newStudent.setEducation(educationToStudent);
+        }
+        return newStudent;
+    }
 
     /**
      * Checks to see if user input is in range of menu choice. Takes an integer
@@ -791,7 +822,195 @@ public class Menus {
         }
         return inRange;
     }
-/////////////////////////////////////////////////
+
+    /**
+     * String input for id.
+     *
+     * @return a String with validaded id number
+     */
+    public Long idInput() {
+        boolean isValid = true;
+        String inPut = "";
+        while (isValid) {
+            char first;
+            inPut = ue.getStringInputFromUser("Id number: ");
+            if (inPut.length() > 0) {
+                first = inPut.charAt(0);
+                isValid = false;
+            } else {
+                ue.printText("invalid input, try again");
+            }
+        }
+        return Long.parseLong(inPut);
+    }
+
+    /**
+     * String input for answering yes or no.
+     *
+     * @return a validaded String
+     */
+    public String stringInputYesNo() {
+        boolean isValid = true;
+        String inPut = "";
+        while (isValid) {
+            char first;
+            inPut = ue.getStringInputFromUser("yes/no");
+            if (inPut.length() > 0) {
+                first = inPut.charAt(0);
+                isValid = false;
+            } else {
+                ue.printText("invalid input, try again");
+            }
+        }
+        return inPut;
+    }
+
+    /**
+     * Long input for person number.
+     *
+     * @return a Long with validaded person number number
+     */
+    public Long personNumberInput() {
+        boolean isValid = false;
+        String inPut = "";
+        while (!isValid) {
+            char first;
+            inPut = ue.getStringInputFromUser("Person number: ");
+            if (inPut.length() > 0) {
+                first = inPut.charAt(0);
+                isValid = true;
+            } else {
+                ue.printText("invalid input, try again");
+            }
+        }
+        return Long.parseLong(inPut);
+    }
+
+    /**
+     * String input for firstName.
+     *
+     * @return a String with validaded firstName
+     */
+    public String firstNameInput() {
+        boolean isValid = true;
+        String inPut = "";
+        while (isValid) {
+            char first;
+            inPut = ue.getStringInputFromUser("First name: ");
+            if (inPut.length() > 0) {
+                first = inPut.charAt(0);
+                isValid = false;
+            } else {
+                ue.printText("invalid input, try again");
+            }
+        }
+        return inPut;
+    }
+
+    /**
+     * String input for surName.
+     *
+     * @return a String with validaded surName
+     */
+    public String surNameInput() {
+        boolean isValid = true;
+        String inPut = "";
+        while (isValid) {
+            char first;
+            inPut = ue.getStringInputFromUser("Sur name: ");
+            if (inPut.length() > 0) {
+                first = inPut.charAt(0);
+                isValid = false;
+            } else {
+                ue.printText("invalid input, try again");
+            }
+        }
+        return inPut;
+    }
+
+    /**
+     * String input for name.
+     *
+     * @return a String with validaded name
+     */
+    public String nameInput() {
+        boolean isValid = true;
+        String inPut = "";
+        while (isValid) {
+            char first;
+            inPut = ue.getStringInputFromUser("Name: ");
+            if (inPut.length() > 0) {
+                first = inPut.charAt(0);
+                isValid = false;
+            } else {
+                ue.printText("invalid input, try again");
+            }
+        }
+        return inPut;
+    }
+
+    /**
+     * String input for start date.
+     *
+     * @return a String with validaded start date
+     */
+    public String startDateInput() {
+        boolean isValid = true;
+        String inPut = "";
+        while (isValid) {
+            char first;
+            inPut = ue.getStringInputFromUser("Start date: ");
+            if (inPut.length() > 0) {
+                first = inPut.charAt(0);
+                isValid = false;
+            } else {
+                ue.printText("invalid input, try again");
+            }
+        }
+        return inPut;
+    }
+
+    /**
+     * String input for end date.
+     *
+     * @return a String with validaded end date
+     */
+    public String endDateInput() {
+        boolean isValid = true;
+        String inPut = "";
+        while (isValid) {
+            char first;
+            inPut = ue.getStringInputFromUser("End date: ");
+            if (inPut.length() > 0) {
+                first = inPut.charAt(0);
+                isValid = false;
+            } else {
+                ue.printText("invalid input, try again");
+            }
+        }
+        return inPut;
+    }
+
+    /**
+     * String input for schoolBreak date.
+     *
+     * @return a String with validaded schoolBreak date
+     */
+    public String schoolBreakInput() {
+        boolean isValid = true;
+        String inPut = "";
+        while (isValid) {
+            char first;
+            inPut = ue.getStringInputFromUser("School break: ");
+            if (inPut.length() > 0) {
+                first = inPut.charAt(0);
+                isValid = false;
+            } else {
+                ue.printText("invalid input, try again");
+            }
+        }
+        return inPut;
+    }
 
     /**
      * Searching after a course in database
@@ -799,10 +1018,10 @@ public class Menus {
      * @return an object of Course
      */
     public Course searchAndFindCourse() {
-        Long courseId = utility.isLongValid(ue.getStringInputFromUser("Enter Course id number: "));
+        ue.printText("Enter Course");
+        Long courseId = idInput();
         Course courseFromDb = db.findCourseById(courseId);
-        Course educationToCourse = thereIsAlreadyACourse(courseId);
-        return educationToCourse;
+        return courseFromDb;
     }
 
     /**
@@ -811,10 +1030,10 @@ public class Menus {
      * @return an object of Student
      */
     public Student searchAndFindStudent() {
-        Long pn = utility.isLongValid(ue.getStringInputFromUser("Enter Student person number: "));
+        ue.printText("Enter Student ");
+        Long pn = personNumberInput();
         Student studentFromDb = db.findStudentById(pn);
-        Student student = thereIsAlreadyAStudent(pn);
-        return student;
+        return studentFromDb;
     }
 
     /**
@@ -823,10 +1042,10 @@ public class Menus {
      * @return an object of Education
      */
     public Education searchAndFindEducation() {
-        Long educationId = utility.isLongValid(ue.getStringInputFromUser("Enter Education id number: "));
+        ue.printText("Enter Education ");
+        Long educationId = idInput();
         Education educationFromDb = db.findEducationById(educationId);
-        Education setEducationToCourse = thereIsAlreadyAEducation(educationId);
-        return setEducationToCourse;
+        return educationFromDb;
     }
 
     /**
@@ -835,10 +1054,10 @@ public class Menus {
      * @return an object of Teacher
      */
     public Teacher searchAndFindTeacher() {
-        Long pn = utility.isLongValid(ue.getStringInputFromUser("Enter Teacher person number: "));
+        ue.printText("Enter Teacher");
+        Long pn = personNumberInput();
         Teacher teacherFromDb = db.findTeacherById(pn);
-        Teacher teacher = thereIsAlreadyATeacher(pn);
-        return teacher;
+        return teacherFromDb;
     }
 
     /**
@@ -853,8 +1072,8 @@ public class Menus {
     public Education thereIsAlreadyAEducation(Long id) {
         Education foundEducation = db.findEducationById(id);
         if (foundEducation == null) {
-            ue.printText("No such education");
         } else {
+            ue.printText("There is already a education with that id number in the system");
             return foundEducation;
         }
         return null;
@@ -872,8 +1091,8 @@ public class Menus {
     public Course thereIsAlreadyACourse(Long id) {
         Course foundCourse = db.findCourseById(id);
         if (foundCourse == null) {
-            ue.printText("No such course");
         } else {
+            ue.printText("There is already a course with that id number in the system");
             return foundCourse;
         }
         return null;
@@ -891,8 +1110,8 @@ public class Menus {
     public Teacher thereIsAlreadyATeacher(Long pn) {
         Teacher foundTeacher = db.findTeacherById(pn);
         if (foundTeacher == null) {
-            ue.printText("No such teacher");
         } else {
+            ue.printText("There is already a teacher with that person number in the system");
             return foundTeacher;
         }
         return null;
@@ -909,9 +1128,10 @@ public class Menus {
      */
     public Student thereIsAlreadyAStudent(Long pn) {
         Student foundStudent = db.findStudentById(pn);
+
         if (foundStudent == null) {
-            ue.printText("No such student");
         } else {
+            ue.printText("There is already a student with that person number in the system");
             return foundStudent;
         }
         return null;
@@ -956,6 +1176,5 @@ public class Menus {
         List<Course> listOfCourses = db.getAllCourses();
         return listOfCourses;
     }
-
 
 }
