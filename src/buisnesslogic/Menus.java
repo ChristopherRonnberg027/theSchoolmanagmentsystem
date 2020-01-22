@@ -1,13 +1,16 @@
 package buisnesslogic;
 
+import static buisnesslogic.MenuTexts.courseEditMenuText;
 import static buisnesslogic.MenuTexts.coursesMenuText;
-import static buisnesslogic.MenuTexts.editMenuText;
+import static buisnesslogic.MenuTexts.educationEditMenuText;
 import static buisnesslogic.MenuTexts.educationMenuText;
 import static buisnesslogic.MenuTexts.enterIdToAddMenuText;
 import static buisnesslogic.MenuTexts.enterPnToAddMenuText;
 import static buisnesslogic.MenuTexts.mainMenuText;
 import static buisnesslogic.MenuTexts.statMenuTexts;
+import static buisnesslogic.MenuTexts.studentEditMenuText;
 import static buisnesslogic.MenuTexts.studentsMenuText;
+import static buisnesslogic.MenuTexts.teacherEditMenuText;
 import static buisnesslogic.MenuTexts.teachersMenuText;
 import buisnesslogic.userEnvironmentAccess.UserEnviromentAccess;
 import java.util.List;
@@ -18,6 +21,8 @@ import theschoolmanagmentsystem.userEnvironment.UserEnviromentCommandPrImpl;
 import theschoolmanagmentsystem.databaseControl.dbDAO;
 import theschoolmanagmentsystem.domain.Course;
 import theschoolmanagmentsystem.domain.Education;
+import theschoolmanagmentsystem.domain.StatisticsImpl;
+import theschoolmanagmentsystem.domain.StatisticsInterface;
 import theschoolmanagmentsystem.domain.Student;
 import theschoolmanagmentsystem.domain.Teacher;
 import theschoolmanagmentsystem.domain.exceptions.NonexistentEntityException;
@@ -38,6 +43,8 @@ public class Menus {
     dbDAO db = new dbControlJpaImpl();
     //To access databes use 'db' variable
 
+    StatisticsInterface stat = new StatisticsImpl();
+
     /**
      * Main menu. Users switches between 5 choices: 1. Course menu. 2. Education
      * menu. 3. Student menu. 4. Teacher menu 0. Exit application.
@@ -45,7 +52,7 @@ public class Menus {
     public void mainMenu() {
         boolean mainLoop = true;
         while (mainLoop) {
-            int mainChoice = intInRangeFromUser(0, 4, ue.getIntegerInputFromUser(mainMenuText));
+            int mainChoice = intInRangeFromUser(0, 5, ue.getIntegerInputFromUser(mainMenuText));
             switch (mainChoice) {
                 case 1:
                     courseMenu();
@@ -59,9 +66,9 @@ public class Menus {
                 case 4:
                     teacherMenu();
                     break;
-//                case 5:
-//                    // STAT MENU?
-//                    break;
+                case 5:
+                    statMenu();
+                    break;
                 case 0:
                     mainLoop = false;
                     break;
@@ -75,15 +82,19 @@ public class Menus {
     public void statMenu() {
         boolean statMenuLoop = true;
         while (statMenuLoop) {
-            int statMenuChoice = intInRangeFromUser(0, 4, ue.getIntegerInputFromUser(statMenuTexts));
+            int statMenuChoice = intInRangeFromUser(0, 3, ue.getIntegerInputFromUser(statMenuTexts));
             switch (statMenuChoice) {
                 case 1:
+                    //STUDENT STAT
+                    studentStat();
                     break;
                 case 2:
+                    // TEACHER STAT
+                    teacherStat();
                     break;
                 case 3:
-                    break;
-                case 4:
+                    // COURSES and STUDENTS PER EDUCATION
+                    coursesPerEducationStat();
                     break;
                 case 0:
                     statMenuLoop = false;
@@ -92,6 +103,58 @@ public class Menus {
         }
     }
 
+    /**
+     * Statistics about students, print the average age of all students in the
+     * system.
+     */
+    public void studentStat() {
+        boolean studentStatLoop = true;
+        while (studentStatLoop) {
+            ue.printText("Statistics about Students");
+            double averageAge = stat.getAverageAgeOfStudents();
+            ue.printText("\nAverage age of students:" + "\n" + averageAge);
+            int userChoice = intInRangeFromUser(0, 0, ue.getIntegerInputFromUser("\n0. Back"));
+            if (userChoice == 0) {
+                studentStatLoop = false;
+            }
+        }
+    }
+
+    /**
+     * Statistics about teachers, print the average age of all teachers in the
+     * system.
+     */
+    public void teacherStat() {
+        boolean teacherStatLoop = true;
+        while (teacherStatLoop) {
+            ue.printText("Statistics about Teachers");
+            double averageAge = stat.getAverageAgeOfTeachers();
+            ue.printText("\nAverage age of Teachers:" + "\n" + averageAge);
+            int userChoice = intInRangeFromUser(0, 0, ue.getIntegerInputFromUser("\n0. Back"));
+            if (userChoice == 0) {
+                teacherStatLoop = false;
+            }
+        }
+    }
+
+    /**
+     * Statistics about educations, print the average number of courses and
+     * students from the system.
+     */
+    public void coursesPerEducationStat() {
+        boolean coursePerEducationStatLoop = true;
+        while (coursePerEducationStatLoop) {
+            ue.printText("Statistics about Education");
+            double numberOFCoursesPerEducation = stat.getAverageNrOfCoursesPerEducation();
+            double numberOFStudentsPerEducation = stat.getAverageNrOfStudentsPerEducation();
+            ue.printText("\nAverage number of Courses per Education:" + "\n" + numberOFCoursesPerEducation);
+            ue.printText("\nAverage number of Students per Education:" + "\n" + numberOFStudentsPerEducation);
+            int userChoice = intInRangeFromUser(0, 0, ue.getIntegerInputFromUser("\n0. Back"));
+            if (userChoice == 0) {
+                coursePerEducationStatLoop = false;
+            }
+        }
+    }
 
     /**
      * Education Menu. Switches between 3 choices: 1. Calls
@@ -216,7 +279,7 @@ public class Menus {
                 educationEditMenuLoop = false;
             } else {
                 ue.printFull(educationToEdit);
-                int courseEditMenuChoice = intInRangeFromUser(0, 2, ue.getIntegerInputFromUser(editMenuText));
+                int courseEditMenuChoice = intInRangeFromUser(0, 2, ue.getIntegerInputFromUser(educationEditMenuText));
                 switch (courseEditMenuChoice) {
                     case 1:
                         // EDIT EDUCATION INFORMATION
@@ -226,6 +289,12 @@ public class Menus {
                         // DELETE EDUCATION
                         deleteEducation(educationToEdit);
                         educationEditMenuLoop = false;
+                        break;
+                    case 3:
+                        deleteCourseFromEducation(educationToEdit);
+                        break;
+                    case 4:
+                        deleteStudentsFromEducation(educationToEdit);
                         break;
                     case 0:
                         educationEditMenuLoop = false;
@@ -331,7 +400,7 @@ public class Menus {
                 courseEditMenuLoop = false;
             } else {
                 ue.printFull(courseToEdit);
-                int courseEditMenuChoice = intInRangeFromUser(0, 2, ue.getIntegerInputFromUser(editMenuText));
+                int courseEditMenuChoice = intInRangeFromUser(0, 4, ue.getIntegerInputFromUser(courseEditMenuText));
                 switch (courseEditMenuChoice) {
                     case 1:
                         // EDIT COURSE INFORMATION
@@ -340,6 +409,13 @@ public class Menus {
                     case 2:
                         // DELETE COURSE
                         deleteCourse(courseToEdit);
+                        courseEditMenuLoop = false;
+                        break;
+                    case 3:
+                        deleteTeachersFromCourse(courseToEdit);
+                        break;
+                    case 4:
+                        deleteEducationFromCourse(courseToEdit);
                         break;
                     case 0:
                         courseEditMenuLoop = false;
@@ -370,6 +446,189 @@ public class Menus {
             } else if (yesNoChoice == 0) {
                 isNotSure = false;
             }
+        }
+    }
+
+    /**
+     * Deletes students from education. Needs a object of Education to edit list
+     * of Student
+     *
+     * @param educationToEdit An Object of Course
+     */
+    public void deleteStudentsFromEducation(Education educationToEdit) {
+        boolean deleteStudentLoop = true;
+        while (deleteStudentLoop) {
+            List<Student> studentList = educationToEdit.getStudents();
+            if (studentList == null) {
+                ue.printText("No students attached to this education...");
+                deleteStudentLoop = false;
+            } else {
+                ue.printList(studentList);
+                ue.printText("\nEnter student personal number to delete it from this Education:" + "\n");
+                Long pn = personNumberInput();
+                for (Student next : studentList) {
+                    if (pn == next.getPn()) {
+                        ue.printText("\nRemoving "
+                                + next.getFirstName() + " "
+                                + next.getSurName() + " from "
+                                + educationToEdit.getName());
+                        studentList.remove(next);
+                        deleteStudentLoop = false;
+                    }
+                }
+            }
+
+        }
+    }
+
+    /**
+     * Deletes teacher from course. Needs a object of Course to edit list of
+     * Teacher
+     *
+     * @param courseToEdit An Object of Course
+     */
+    public void deleteTeachersFromCourse(Course courseToEdit) {
+        boolean deleteEducationLoop = true;
+        while (deleteEducationLoop) {
+            List<Teacher> teacherList = courseToEdit.getTeachers();
+            if (teacherList == null) {
+                ue.printText("No teachers attached to this course...");
+                deleteEducationLoop = false;
+            } else {
+                ue.printList(teacherList);
+                ue.printText("\nEnter teacher personal number to delete it from this course:" + "\n");
+                Long pn = personNumberInput();
+                for (Teacher next : teacherList) {
+                    if (pn == next.getPn()) {
+                        ue.printText("\nRemoving "
+                                + next.getFirstName() + " "
+                                + next.getSurName() + " from "
+                                + courseToEdit.getName());
+                        teacherList.remove(next);
+                    }
+                }
+            }
+
+        }
+    }
+
+    /**
+     * Deletes education from course. Needs a object of Course to edit list of
+     * Education
+     *
+     * @param courseToEdit An Object of Course
+     */
+    public void deleteEducationFromCourse(Course courseToEdit) {
+        boolean deleteEducationLoop = true;
+        while (deleteEducationLoop) {
+            List<Education> educationList = courseToEdit.getEducations();
+            if (educationList == null) {
+                ue.printText("No education attached to this course...");
+                deleteEducationLoop = false;
+            } else {
+                ue.printList(educationList);
+
+                ue.printText("\nEnter education id to delete it from this course:" + "\n");
+                Long id = idInput();
+                for (Education next : educationList) {
+                    if (id == next.getId()) {
+                        ue.printText("\nRemoving " + next.getName() + " from " + courseToEdit.getName());
+                        educationList.remove(next);
+                        deleteEducationLoop = false;
+                    }
+                }
+            }
+
+        }
+    }
+
+    /**
+     * Deletes course from education. Needs a object of Education to edit list
+     * of Course
+     *
+     * @param educationToEdit An Object of Course
+     */
+    public void deleteCourseFromEducation(Education educationToEdit) {
+        boolean deleteCourseLoop = true;
+        while (deleteCourseLoop) {
+            List<Course> courseList = educationToEdit.getCourses();
+            if (courseList == null) {
+                ue.printText("No education attached to this course...");
+                deleteCourseLoop = false;
+            } else {
+                ue.printList(courseList);
+
+                ue.printText("\nEnter education id to delete it from this course:" + "\n");
+                Long id = idInput();
+                for (Course next : courseList) {
+                    if (id == next.getId()) {
+                        ue.printText("\nRemoving " + next.getName() + " from " + educationToEdit.getName());
+                        courseList.remove(next);
+                        deleteCourseLoop = false;
+                    }
+                }
+
+            }
+
+        }
+    }
+
+    /**
+     * Deletes course from education. Needs a object of Education to edit list
+     * of Course
+     *
+     * @param teacherToEdit An Object of Course
+     */
+    public void deleteCourseFromTeacher(Teacher teacherToEdit) {
+        boolean deleteCourseLoop = true;
+        while (deleteCourseLoop) {
+            List<Course> courseList = teacherToEdit.getCourses();
+            if (courseList == null) {
+                ue.printText("No course attached to this teacher...");
+                deleteCourseLoop = false;
+            } else {
+                ue.printList(courseList);
+
+                ue.printText("\nEnter course id to delete it from this teacher:" + "\n");
+                Long id = idInput();
+                for (Course next : courseList) {
+                    if (id == next.getId()) {
+                        ue.printText("\nRemoving " + next.getName() + " from " + teacherToEdit.getFirstName() + " " + teacherToEdit.getSurName());
+                        courseList.remove(next);
+                        deleteCourseLoop = false;
+                    }
+                }
+
+            }
+
+        }
+    }
+
+    /**
+     * Deletes education from student. Needs a object of Student to delete
+     * Education from Student
+     *
+     * @param studentToEdit An Object of Course
+     */
+    public void deleteEducationFromStudent(Student studentToEdit) {
+        boolean deleteEducationLoop = true;
+        while (deleteEducationLoop) {
+            Education educationFromStudent = studentToEdit.getEducation();
+            if (educationFromStudent == null) {
+                ue.printText("No education attached to this student...");
+                deleteEducationLoop = false;
+            } else {
+                ue.printText(studentToEdit.getEducation().getId() + " " + studentToEdit.getEducation().getName());
+
+                ue.printText("\nEnter education id to delete it from this student:" + "\n");
+                Long id = idInput();
+                if (id == studentToEdit.getEducation().getId()) {
+                    studentToEdit.setEducation(null);
+                    deleteEducationLoop = false;
+                }
+
+            }
+
         }
     }
 
@@ -409,7 +668,7 @@ public class Menus {
         Long id = courseToEdit.getId();
         boolean editCourseLoop = true;
         while (editCourseLoop) {
-            ue.printText("Edit Course?");
+            ue.printText("Edit Course");
             int yesNoChoice = intInRangeFromUser(0, 1, ue.getIntegerInputFromUser("\n1. Yes\n0. No"));
             if (yesNoChoice == 0) {
                 editCourseLoop = false;
@@ -523,7 +782,7 @@ public class Menus {
                 teacherEditMenuLoop = false;
             } else {
                 ue.printFull(teacherToEdit);
-                int teacherEditMenuChoice = intInRangeFromUser(0, 2, ue.getIntegerInputFromUser(editMenuText));
+                int teacherEditMenuChoice = intInRangeFromUser(0, 2, ue.getIntegerInputFromUser(teacherEditMenuText));
                 switch (teacherEditMenuChoice) {
                     case 1:
                         // EDIT TEACHER INFORMATION
@@ -533,6 +792,9 @@ public class Menus {
                         // DELETE TEACHER
                         deleteTeacher(teacherToEdit);
                         teacherEditMenuLoop = false;
+                        break;
+                    case 3:
+                        deleteCourseFromTeacher(teacherToEdit);
                         break;
                     case 0:
                         teacherEditMenuLoop = false;
@@ -680,7 +942,7 @@ public class Menus {
                 studentEditMenuLoop = false;
             } else {
                 ue.printFull(studentToEdit);
-                int studentEditMenuChoice = intInRangeFromUser(0, 2, ue.getIntegerInputFromUser(editMenuText));
+                int studentEditMenuChoice = intInRangeFromUser(0, 2, ue.getIntegerInputFromUser(studentEditMenuText));
                 switch (studentEditMenuChoice) {
                     case 1:
                         // EDIT STUDENT INFORMATION
@@ -690,6 +952,9 @@ public class Menus {
                         // DELETE STUDENT
                         deleteStudent(studentToEdit);
                         studentEditMenuLoop = false;
+                        break;
+                    case 3:
+                        deleteEducationFromStudent(studentToEdit);
                         break;
                     case 0:
                         studentEditMenuLoop = false;
