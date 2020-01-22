@@ -1,5 +1,6 @@
 package theschoolmanagmentsystem.domain;
 
+import java.time.LocalDate;
 import static java.util.stream.Collectors.averagingDouble;
 import theschoolmanagmentsystem.databaseControl.dbControlJpaImpl;
 
@@ -9,12 +10,14 @@ public class StatisticsImpl implements StatisticsInterface {
 
     @Override
     public double getAverageAgeOfStudents() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return LocalDate.now().getYear() - dbC.getAllStudents().stream()
+                .collect(averagingDouble(s -> (int) (s.getPn() / Math.pow(10,8))));
     }
 
     @Override
     public double getAverageAgeOfTeachers() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return LocalDate.now().getYear() - dbC.getAllTeachers().stream()
+                .collect(averagingDouble(t -> (int) (t.getPn() / Math.pow(10,8))));
     }
 
     @Override
