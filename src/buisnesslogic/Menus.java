@@ -38,9 +38,6 @@ public class Menus {
     dbDAO db = new dbControlJpaImpl();
     //To access databes use 'db' variable
 
-    //Instantiates utility class
-    //Utilities utility = new Utilities();
-
     /**
      * Main menu. Users switches between 5 choices: 1. Course menu. 2. Education
      * menu. 3. Student menu. 4. Teacher menu 0. Exit application.
@@ -95,6 +92,7 @@ public class Menus {
         }
     }
 
+
     /**
      * Education Menu. Switches between 3 choices: 1. Calls
      * addNewEducation()-method 2. Calls educationEditMenu()-method 3. Back to
@@ -130,9 +128,9 @@ public class Menus {
     public void deleteEducation(Education educationToDelete) {
         boolean isNotSure = true;
         while (isNotSure) {
-            ue.printText("Delete Education?");
-            String answer = stringInputYesNo();
-            if (answer.equalsIgnoreCase("yes")) {
+            ue.printText("Delete " + educationToDelete.getName() + "?");
+            int yesNoChoice = intInRangeFromUser(0, 1, ue.getIntegerInputFromUser("\n1. Yes\n0. No"));
+            if (yesNoChoice == 1) {
                 try {
                     db.destroyEducation(educationToDelete);
                 } catch (NonexistentEntityException ex) {
@@ -140,7 +138,7 @@ public class Menus {
                     ue.printText("Entity not found...");
                 }
                 isNotSure = false;
-            } else {
+            } else if (yesNoChoice == 0) {
                 isNotSure = false;
             }
         }
@@ -157,10 +155,10 @@ public class Menus {
         boolean editEducationLoop = true;
         while (editEducationLoop) {
             ue.printText("Edit education?");
-            String answer = stringInputYesNo();
-            if (answer.equalsIgnoreCase("no")) {
+            int yesNoChoice = intInRangeFromUser(0, 1, ue.getIntegerInputFromUser("\n1. Yes\n0. No"));
+            if (yesNoChoice == 0) {
                 editEducationLoop = false;
-            } else {
+            } else if (yesNoChoice == 1) {
                 educationToEdit = editEducationInfo(id);
                 try {
                     db.editEducation(educationToEdit);
@@ -359,9 +357,9 @@ public class Menus {
     public void deleteCourse(Course courseToDelete) {
         boolean isNotSure = true;
         while (isNotSure) {
-            ue.printText("Delete Course?");
-            String answer = stringInputYesNo();
-            if (answer.equalsIgnoreCase("yes")) {
+            ue.printText("Delete " + courseToDelete.getName() + "?");
+            int yesNoChoice = intInRangeFromUser(0, 1, ue.getIntegerInputFromUser("\n1. Yes\n0. No"));
+            if (yesNoChoice == 1) {
                 try {
                     db.destroyCourse(courseToDelete);
                 } catch (NonexistentEntityException ex) {
@@ -369,7 +367,7 @@ public class Menus {
                     ue.printText("Entity not found...");
                 }
                 isNotSure = false;
-            } else {
+            } else if (yesNoChoice == 0) {
                 isNotSure = false;
             }
         }
@@ -412,10 +410,10 @@ public class Menus {
         boolean editCourseLoop = true;
         while (editCourseLoop) {
             ue.printText("Edit Course?");
-            String answer = stringInputYesNo();
-            if (answer.equalsIgnoreCase("no")) {
+            int yesNoChoice = intInRangeFromUser(0, 1, ue.getIntegerInputFromUser("\n1. Yes\n0. No"));
+            if (yesNoChoice == 0) {
                 editCourseLoop = false;
-            } else {
+            } else if (yesNoChoice == 1) {
                 editCourseInfo(id);
                 try {
                     db.editCourse(courseToEdit);
@@ -552,9 +550,10 @@ public class Menus {
     public void deleteTeacher(Teacher teacherToDelete) {
         boolean isNotSure = true;
         while (isNotSure) {
-            ue.printText("Delete Teacher?");
-            String answer = stringInputYesNo();
-            if (answer.equalsIgnoreCase("yes")) {
+            ue.printText("Delete " + teacherToDelete.getFirstName() + " "
+                    + teacherToDelete.getSurName() + "?");
+            int yesNoChoice = intInRangeFromUser(0, 1, ue.getIntegerInputFromUser("\n1. Yes\n0. No"));
+            if (yesNoChoice == 1) {
                 try {
                     db.destroyTeacher(teacherToDelete);
                 } catch (NonexistentEntityException ex) {
@@ -562,7 +561,7 @@ public class Menus {
                     Logger.getLogger(Menus.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 isNotSure = false;
-            } else {
+            } else if (yesNoChoice == 0) {
                 isNotSure = false;
             }
         }
@@ -579,10 +578,10 @@ public class Menus {
         boolean editTeacherLoop = true;
         while (editTeacherLoop) {
             ue.printText("Edit teacher?");
-            String answer = stringInputYesNo();
-            if (answer.equalsIgnoreCase("no")) {
+            int yesNoChoice = intInRangeFromUser(0, 1, ue.getIntegerInputFromUser("\n1. Yes\n0. No"));
+            if (yesNoChoice == 0) {
                 editTeacherLoop = false;
-            } else {
+            } else if (yesNoChoice == 1) {
                 teacherToEdit = editTeacherInfo(pn);
                 try {
                     db.editTeacher(teacherToEdit);
@@ -709,9 +708,9 @@ public class Menus {
     public void deleteStudent(Student studentToDelete) {
         boolean isNotSure = true;
         while (isNotSure) {
-            ue.printText("Delete student?");
-            String answer = stringInputYesNo();
-            if (answer.equalsIgnoreCase("yes")) {
+            ue.printText("Delete" + studentToDelete.getFirstName() + " " + studentToDelete.getSurName() + "?");
+            int yesNoChoice = intInRangeFromUser(0, 1, ue.getIntegerInputFromUser("\n1. Yes\n0. No"));
+            if (yesNoChoice == 1) {
                 try {
                     db.destroyStudent(studentToDelete);
                 } catch (NonexistentEntityException ex) {
@@ -719,7 +718,7 @@ public class Menus {
                     ue.printText("Entity not found...");
                 }
                 isNotSure = false;
-            } else {
+            } else if (yesNoChoice == 0) {
                 isNotSure = false;
             }
         }
@@ -736,10 +735,10 @@ public class Menus {
         boolean editStudentLoop = true;
         while (editStudentLoop) {
             ue.printText("Edit student?");
-            String answer = stringInputYesNo();
-            if (answer.equalsIgnoreCase("no")) {
+            int yesNoChoice = intInRangeFromUser(0, 1, ue.getIntegerInputFromUser("\n1. Yes\n0. No"));
+            if (yesNoChoice == 0) {
                 editStudentLoop = false;
-            } else {
+            } else if (yesNoChoice == 1) {
                 studentToEdit = editStudentInfo(pn);
                 try {
                     db.editStudent(studentToEdit);
@@ -842,27 +841,6 @@ public class Menus {
             }
         }
         return Long.parseLong(inPut);
-    }
-
-    /**
-     * String input for answering yes or no.
-     *
-     * @return a validaded String
-     */
-    public String stringInputYesNo() {
-        boolean isValid = true;
-        String inPut = "";
-        while (isValid) {
-            char first;
-            inPut = ue.getStringInputFromUser("yes/no");
-            if (inPut.length() > 0) {
-                first = inPut.charAt(0);
-                isValid = false;
-            } else {
-                ue.printText("invalid input, try again");
-            }
-        }
-        return inPut;
     }
 
     /**
