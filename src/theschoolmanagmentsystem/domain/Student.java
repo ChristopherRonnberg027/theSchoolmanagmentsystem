@@ -64,7 +64,7 @@ public class Student implements Serializable {
 
     @Override
     public String toString() {
-        return "- Student: " + firstName + " " + surName + ", Personal identification number " + pn;
+        return "- Student: " + firstName + " " + surName + ",\tPersonal identification number " + pn;
     }
 
     

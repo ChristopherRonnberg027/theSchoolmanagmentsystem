@@ -15,7 +15,7 @@ public class UserEnviromentCommandPrImpl implements UserEnviromentAccess {
     
     @Override
     public void print(Student studentToPrint) {
-        System.out.printf("%s %s, Education: %s, "
+        System.out.printf("%s %s,\tEducation: %s,\t"
                 + "Personal identification number: %d\n",
                 studentToPrint.getFirstName(), studentToPrint.getSurName(),
                 studentToPrint.getEducation().getName(),
@@ -24,7 +24,7 @@ public class UserEnviromentCommandPrImpl implements UserEnviromentAccess {
 
     @Override
     public void print(Teacher teacherToPrint) {
-        System.out.printf("%s %s, "
+        System.out.printf("%s %s,\t"
                 + "Personal identification number: %d\n",
                 teacherToPrint.getFirstName(), teacherToPrint.getSurName(),
                 teacherToPrint.getPn());
@@ -32,14 +32,14 @@ public class UserEnviromentCommandPrImpl implements UserEnviromentAccess {
 
     @Override
     public void print(Course courseToPrint) {
-        System.out.printf("%s, lasts from %s to %s, schoolbreak %s\n", courseToPrint.getName(),
+        System.out.printf("%s,\tlasts from %s to %s, schoolbreak %s\n", courseToPrint.getName(),
                 courseToPrint.getStart(), courseToPrint.getEnd(),
                 courseToPrint.getSchoolBreak());
     }
 
     @Override
     public void print(Education educationToPrint) {
-        System.out.printf("%s, lasts from %s to %s, schoolbreak %s\n", educationToPrint.getName(),
+        System.out.printf("%s,\tlasts from %s to %s, schoolbreak %s\n", educationToPrint.getName(),
                 educationToPrint.getStart(), educationToPrint.getEnd(),
                 educationToPrint.getSchoolBreak());
     }

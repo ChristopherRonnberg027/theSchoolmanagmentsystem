@@ -123,7 +123,7 @@ public class Course implements Serializable {
     
     @Override
     public String toString() {
-        return "Id: " + id + ", Name: " + name + ", lasts from " + start + " to " + end + ", schoolBreak " + schoolBreak;
+        return "Id: " + id + ",\tName: " + name + ",\tlasts from " + start + " to " + end + ",\tschoolBreak " + schoolBreak;
     }
 
 }
