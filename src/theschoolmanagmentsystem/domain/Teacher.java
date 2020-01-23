@@ -77,7 +77,7 @@ public class Teacher implements Serializable {
 
     @Override
     public String toString() {
-        return "- Teacher: " + firstName + " " + surName + ", Personal identification number " + pn;
+        return "- Teacher: " + firstName + " " + surName + ",\tPersonal identification number " + pn;
     }
     
     
