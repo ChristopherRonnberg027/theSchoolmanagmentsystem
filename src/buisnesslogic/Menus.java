@@ -1,38 +1,15 @@
 package buisnesslogic;
 
-import static buisnesslogic.MenuTexts.averageAgeOfStudentsText;
-import static buisnesslogic.MenuTexts.averageAgeOfTeachersText;
-import static buisnesslogic.MenuTexts.courseEditMenuText;
-import static buisnesslogic.MenuTexts.coursesMenuText;
-import static buisnesslogic.MenuTexts.editCourseTexts;
-import static buisnesslogic.MenuTexts.editEducationTexts;
-import static buisnesslogic.MenuTexts.editStudentTexts;
-import static buisnesslogic.MenuTexts.editTeacherTexts;
-import static buisnesslogic.MenuTexts.educationEditMenuText;
-import static buisnesslogic.MenuTexts.educationMenuText;
-import static buisnesslogic.MenuTexts.enterIdToAddMenuText;
-import static buisnesslogic.MenuTexts.enterPnToAddMenuText;
-import static buisnesslogic.MenuTexts.mainMenuText;
-import static buisnesslogic.MenuTexts.pressZeroForBackText;
-import static buisnesslogic.MenuTexts.statMenuTexts;
-import static buisnesslogic.MenuTexts.studentEditMenuText;
-import static buisnesslogic.MenuTexts.studentsMenuText;
-import static buisnesslogic.MenuTexts.teacherEditMenuText;
-import static buisnesslogic.MenuTexts.teachersMenuText;
-import static buisnesslogic.MenuTexts.yesNoText;
+import static buisnesslogic.MenuTexts.*;
 import buisnesslogic.userEnvironmentAccess.UserEnviromentAccess;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.persistence.EntityNotFoundException;
 import theschoolmanagmentsystem.databaseControl.dbControlJpaImpl;
 import theschoolmanagmentsystem.databaseControl.dbDAO;
-import theschoolmanagmentsystem.domain.Course;
-import theschoolmanagmentsystem.domain.Education;
-import theschoolmanagmentsystem.domain.StatisticsImpl;
-import theschoolmanagmentsystem.domain.StatisticsInterface;
-import theschoolmanagmentsystem.domain.Student;
-import theschoolmanagmentsystem.domain.Teacher;
-import theschoolmanagmentsystem.domain.exceptions.NonexistentEntityException;
+import theschoolmanagmentsystem.domain.*;
+import theschoolmanagmentsystem.domain.exceptions.*;
 import theschoolmanagmentsystem.userEnvironment.UserEnviromentCommandPrImpl;
 
 public class Menus {
@@ -52,9 +29,8 @@ public class Menus {
      * menu. 3. Student menu. 4. Teacher menu 0. Exit application.
      */
     public void mainMenu() {
-        boolean mainLoop = true;
-        while (mainLoop) {
-            int mainChoice = intInRangeFromUser(0, 5, ue.getIntegerInputFromUser(mainMenuText));
+        while (true) {
+            int mainChoice = intInRangeFromUser(0, 5, mainMenuText);
             switch (mainChoice) {
                 case 1:
                     courseMenu();
@@ -72,8 +48,7 @@ public class Menus {
                     statMenu();
                     break;
                 case 0:
-                    mainLoop = false;
-                    break;
+                    System.exit(0);
             }
         }
     }
@@ -84,7 +59,7 @@ public class Menus {
     public void statMenu() {
         boolean statMenuLoop = true;
         while (statMenuLoop) {
-            int statMenuChoice = intInRangeFromUser(0, 3, ue.getIntegerInputFromUser(statMenuTexts));
+            int statMenuChoice = intInRangeFromUser(0, 3, statMenuTexts);
             switch (statMenuChoice) {
                 case 1:
                     studentStat();
@@ -112,7 +87,7 @@ public class Menus {
             ue.printText(averageAgeOfStudentsText);
             double averageAge = stat.getAverageAgeOfStudents();
             ue.printText("\n" + averageAge);
-            int userChoice = intInRangeFromUser(0, 0, ue.getIntegerInputFromUser(pressZeroForBackText));
+            int userChoice = intInRangeFromUser(0, 0, pressZeroForBackText);
             if (userChoice == 0) {
                 studentStatLoop = false;
             }
@@ -129,7 +104,7 @@ public class Menus {
             ue.printText(averageAgeOfTeachersText);
             double averageAge = stat.getAverageAgeOfTeachers();
             ue.printText("\n" + averageAge);
-            int userChoice = intInRangeFromUser(0, 0, ue.getIntegerInputFromUser(pressZeroForBackText));
+            int userChoice = intInRangeFromUser(0, 0, pressZeroForBackText);
             if (userChoice == 0) {
                 teacherStatLoop = false;
             }
@@ -147,7 +122,7 @@ public class Menus {
             double numberOFStudentsPerEducation = stat.getAverageNrOfStudentsPerEducation();
             ue.printText("\nAverage number of Courses per Education:" + "\n" + numberOFCoursesPerEducation);
             ue.printText("\nAverage number of Students per Education:" + "\n" + numberOFStudentsPerEducation);
-            int userChoice = intInRangeFromUser(0, 0, ue.getIntegerInputFromUser(pressZeroForBackText));
+            int userChoice = intInRangeFromUser(0, 0, pressZeroForBackText);
             if (userChoice == 0) {
                 coursePerEducationStatLoop = false;
             }
@@ -163,7 +138,7 @@ public class Menus {
         while (teacherMenuLoop) {
             List<Teacher> teacherList = aListOfTeachersFromDataBase();
             ue.printList(teacherList);
-            int teacherMenuChoice = intInRangeFromUser(0, 2, ue.getIntegerInputFromUser(teachersMenuText));
+            int teacherMenuChoice = intInRangeFromUser(0, 2, teachersMenuText);
             switch (teacherMenuChoice) {
                 case 1:
                     addNewTeacher();
@@ -196,7 +171,7 @@ public class Menus {
                 teacherEditMenuLoop = false;
             } else {
                 ue.printFull(teacherToEdit);
-                int teacherEditMenuChoice = intInRangeFromUser(0, 2, ue.getIntegerInputFromUser(teacherEditMenuText));
+                int teacherEditMenuChoice = intInRangeFromUser(0, 2, teacherEditMenuText);
                 switch (teacherEditMenuChoice) {
                     case 1:
                         editTeacher(teacherToEdit);
@@ -255,7 +230,7 @@ public class Menus {
         while (isNotSure) {
             ue.printText("Delete " + teacherToDelete.getFirstName() + " "
                     + teacherToDelete.getSurName() + "?");
-            int yesNoChoice = intInRangeFromUser(0, 1, ue.getIntegerInputFromUser(yesNoText));
+            int yesNoChoice = intInRangeFromUser(0, 1, yesNoText);
             if (yesNoChoice == 1) {
                 try {
                     db.destroyTeacher(teacherToDelete);
@@ -281,7 +256,7 @@ public class Menus {
         boolean editTeacherLoop = true;
         while (editTeacherLoop) {
 
-            int editTeacherChoice = intInRangeFromUser(0, 3, ue.getIntegerInputFromUser(editTeacherTexts));
+            int editTeacherChoice = intInRangeFromUser(0, 3, editTeacherTexts);
 
             switch (editTeacherChoice) {
                 case 1:
@@ -345,7 +320,7 @@ public class Menus {
      * @param teacher
      */
     public void editTeacherToDB(Teacher teacher) {
- 
+
         try {
             db.editTeacher(teacher);
         } catch (Exception ex) {
@@ -384,7 +359,7 @@ public class Menus {
         while (studentMenuLoop) {
             List<Student> studentList = aListOFStudentFromDataBase();
             ue.printList(studentList);
-            int studentMenuChoice = intInRangeFromUser(0, 2, ue.getIntegerInputFromUser(studentsMenuText));
+            int studentMenuChoice = intInRangeFromUser(0, 2, studentsMenuText);
             switch (studentMenuChoice) {
                 case 1:
                     addNewStudent();
@@ -417,7 +392,7 @@ public class Menus {
                 studentEditMenuLoop = false;
             } else {
                 ue.printFull(studentToEdit);
-                int studentEditMenuChoice = intInRangeFromUser(0, 2, ue.getIntegerInputFromUser(studentEditMenuText));
+                int studentEditMenuChoice = intInRangeFromUser(0, 2, studentEditMenuText);
                 switch (studentEditMenuChoice) {
                     case 1:
                         editStudent(studentToEdit);
@@ -473,7 +448,7 @@ public class Menus {
         boolean isNotSure = true;
         while (isNotSure) {
             ue.printText("Delete" + studentToDelete.getFirstName() + " " + studentToDelete.getSurName() + "?");
-            int yesNoChoice = intInRangeFromUser(0, 1, ue.getIntegerInputFromUser(yesNoText));
+            int yesNoChoice = intInRangeFromUser(0, 1, yesNoText);
             if (yesNoChoice == 1) {
                 try {
                     db.destroyStudent(studentToDelete);
@@ -499,7 +474,7 @@ public class Menus {
         boolean editStudentLoop = true;
         while (editStudentLoop) {
 
-            int editStudentChoice = intInRangeFromUser(0, 3, ue.getIntegerInputFromUser(editStudentTexts));
+            int editStudentChoice = intInRangeFromUser(0, 3, editStudentTexts);
 
             switch (editStudentChoice) {
                 case 1:
@@ -605,7 +580,7 @@ public class Menus {
         while (educationMenuLoop) {
             List<Education> listOfEducations = aListOfEducationsFromDataBase();
             ue.printList(listOfEducations);
-            int educationMenuChoice = intInRangeFromUser(0, 2, ue.getIntegerInputFromUser(educationMenuText));
+            int educationMenuChoice = intInRangeFromUser(0, 2, educationMenuText);
             switch (educationMenuChoice) {
                 case 1:
                     addNewEducation();
@@ -639,7 +614,7 @@ public class Menus {
                 educationEditMenuLoop = false;
             } else {
                 ue.printFull(educationToEdit);
-                int courseEditMenuChoice = intInRangeFromUser(0, 2, ue.getIntegerInputFromUser(educationEditMenuText));
+                int courseEditMenuChoice = intInRangeFromUser(0, 2, educationEditMenuText);
                 switch (courseEditMenuChoice) {
                     case 1:
                         editEducation(educationToEdit);
@@ -729,7 +704,7 @@ public class Menus {
         boolean isNotSure = true;
         while (isNotSure) {
             ue.printText("Delete " + educationToDelete.getName() + "?");
-            int yesNoChoice = intInRangeFromUser(0, 1, ue.getIntegerInputFromUser(yesNoText));
+            int yesNoChoice = intInRangeFromUser(0, 1, yesNoText);
             if (yesNoChoice == 1) {
                 try {
                     db.destroyEducation(educationToDelete);
@@ -755,8 +730,7 @@ public class Menus {
         boolean editEducationLoop = true;
         while (editEducationLoop) {
 
-            int editEductionChoice = intInRangeFromUser(0, 5, ue.getIntegerInputFromUser(
-                    editEducationTexts));
+            int editEductionChoice = intInRangeFromUser(0, 5, editEducationTexts);
 
             switch (editEductionChoice) {
                 case 1:
@@ -890,9 +864,9 @@ public class Menus {
     public void courseMenu() {
         boolean courseMenuLoop = true;
         while (courseMenuLoop) {
-            List<Course> listOfCourses = aListOfCoursesFromDataBase();
-            ue.printList(listOfCourses);
-            int courseMenuChoice = intInRangeFromUser(0, 2, ue.getIntegerInputFromUser(coursesMenuText));
+            // List<Course> listOfCourses = aListOfCoursesFromDataBase();
+            ue.printList(db.getAllCourses());
+            int courseMenuChoice = intInRangeFromUser(0, 2, coursesMenuText);
             switch (courseMenuChoice) {
                 case 1:
                     addNewCourse();
@@ -925,7 +899,7 @@ public class Menus {
                 courseEditMenuLoop = false;
             } else {
                 ue.printFull(courseToEdit);
-                int courseEditMenuChoice = intInRangeFromUser(0, 2, ue.getIntegerInputFromUser(courseEditMenuText));
+                int courseEditMenuChoice = intInRangeFromUser(0, 2, courseEditMenuText);
                 switch (courseEditMenuChoice) {
                     case 1:
                         editCourse(courseToEdit);
@@ -951,7 +925,7 @@ public class Menus {
         boolean isNotSure = true;
         while (isNotSure) {
             ue.printText("Delete " + courseToDelete.getName() + "?");
-            int yesNoChoice = intInRangeFromUser(0, 1, ue.getIntegerInputFromUser(yesNoText));
+            int yesNoChoice = intInRangeFromUser(0, 1, yesNoText);
             if (yesNoChoice == 1) {
                 try {
                     db.destroyCourse(courseToDelete);
@@ -1042,8 +1016,7 @@ public class Menus {
         boolean editCourseLoop = true;
         while (editCourseLoop) {
 
-            int editCourseChoice = intInRangeFromUser(0, 5, ue.getIntegerInputFromUser(
-                    editCourseTexts));
+            int editCourseChoice = intInRangeFromUser(0, 5, editCourseTexts);
 
             switch (editCourseChoice) {
                 case 1:
@@ -1096,19 +1069,18 @@ public class Menus {
     public Course editCourseInfo(Long id) {
         Course course = new Course();
         course.setId(id);
-        String name = nameInput();
-        String start = startDateInput();
-        String end = endDateInput();
-        String schoolBreak = schoolBreakInput();
+        String name = ue.getStringInputFromUser("Name:  ");
+        String start = ue.getStringInputFromUser("Start date:  ");
+        String end = ue.getStringInputFromUser("End date:  ");
+        String schoolBreak = ue.getStringInputFromUser("Schol break:  ");
 
         course.setName(name);
         course.setStart(start);
         course.setEnd(end);
         course.setSchoolBreak(schoolBreak);
 
-        course = addEducationToCourse(course);
-        course = addTeacherToCourse(course);
-
+        // course = addEducationToCourse(course);
+        // course = addTeacherToCourse(course);
         return course;
     }
 
@@ -1157,7 +1129,7 @@ public class Menus {
 
         Course newCourse = (newOrNotCourse == null) ? editCourseInfo(id) : newOrNotCourse;
 
-        if (newCourse != null) {
+        if (newCourse != null && newOrNotCourse == null) {
             db.createCourse(newCourse);
             ue.printText("New Course added!");
         } else {
@@ -1267,9 +1239,12 @@ public class Menus {
      * else a null object.
      */
     public Education thereIsAlreadyAEducation(Long id) {
-        Education foundEducation = db.findEducationById(id);
-        if (foundEducation == null) {
-        } else {
+        Education foundEducation = null;
+        try {
+            foundEducation = db.findEducationById(id);
+        } catch (EntityNotFoundException e) {
+        }  // Education was not found
+        if (foundEducation != null) { // There was such Education already
             ue.printText("There is already a education with that id number in the system");
             return foundEducation;
         }
@@ -1286,9 +1261,13 @@ public class Menus {
      * null object.
      */
     public Course thereIsAlreadyACourse(Long id) {
-        Course foundCourse = db.findCourseById(id);
-        if (foundCourse == null) {
-        } else {
+        Course foundCourse = null;
+        try {
+            foundCourse = db.findCourseById(id);
+
+        } catch (EntityNotFoundException e) {  // Course was not found
+        }
+        if (foundCourse != null) {   // There was such Course already
             ue.printText("There is already a course with that id number in the system");
             return foundCourse;
         }
@@ -1305,9 +1284,13 @@ public class Menus {
      * a null object.
      */
     public Teacher thereIsAlreadyATeacher(Long pn) {
-        Teacher foundTeacher = db.findTeacherById(pn);
-        if (foundTeacher == null) {
-        } else {
+        Teacher foundTeacher = null;
+        try {
+            foundTeacher = db.findTeacherById(pn);
+        } catch (EntityNotFoundException e) {
+        }  // Teacher not found
+
+        if (foundTeacher != null) { // There was such Teacher already
             ue.printText("There is already a teacher with that person number in the system");
             return foundTeacher;
         }
@@ -1324,11 +1307,14 @@ public class Menus {
      * a null object.
      */
     public Student thereIsAlreadyAStudent(Long pn) {
-        Student foundStudent = db.findStudentById(pn);
+        Student foundStudent = null;
+        try {
+            foundStudent = db.findStudentById(pn);
+        } catch (EntityNotFoundException e) {
+        }  // Student not found
 
-        if (foundStudent == null) {
-        } else {
-            ue.printText("There is already a student with that person number in the system");
+        if (foundStudent != null) { // There was such Student already
+            ue.printText("There is already a Student with that person number in the system");
             return foundStudent;
         }
         return null;
@@ -1446,24 +1432,25 @@ public class Menus {
     }
 
     /**
-     * String input for id.
+     * String input for id. Will loop while it is not correct
      *
      * @return a String with validaded id number
      */
     public Long idInput() {
-        boolean isValid = true;
-        String inPut = "";
-        while (isValid) {
-            char first;
-            inPut = ue.getStringInputFromUser("Id number: ");
-            if (inPut.length() > 0) {
-                first = inPut.charAt(0);
-                isValid = false;
-            } else {
-                ue.printText("Invalid input, try again");
+        boolean isNotValid = true; // Must run at least once
+        String inPut = ue.getStringInputFromUser("Course id? :  ");
+        Long retur = null;
+        while (isNotValid) {
+            try {
+                retur = Long.parseLong(inPut);
+                isNotValid = false; // Parsing successfull
+            } catch (NumberFormatException e) { // Parsing failed
+                ue.printText("Invalid input.");
+                inPut = ue.getStringInputFromUser("Course id? :");
+
             }
         }
-        return Long.parseLong(inPut);
+        return retur;
     }
 
     /**
@@ -1559,19 +1546,25 @@ public class Menus {
      * @param userInPut takes an integer from user.
      * @return an integer in range of menu choices.
      */
-    public int intInRangeFromUser(int min, int max, int userInPut) {
-        int inRange = - 1;
-        try {
-            while (inRange < min || inRange > max) {
-                try {
-                    inRange = userInPut;
-                } catch (NumberFormatException e) {
-                    ue.printText("Invalid selection");
-                }
+    public int intInRangeFromUser(int min, int max, String menyText) {
+        String input = ue.getStringInputFromUser(menyText);
+        int retur = -1;
+        boolean wrongInput = true; // Run at least once
+        while (wrongInput) {
+            try {
+                retur = Integer.parseInt(input);
+            } catch (NumberFormatException e) {
+                ue.printText("Numbers only\n");
+                input = ue.getStringInputFromUser(menyText);
             }
-        } catch (Exception e) {
-            ue.printText("Out of meny range");
+            if (retur < min || retur > max) {
+                ue.printText("Not in range\n");
+                input = ue.getStringInputFromUser(menyText);
+            } else {
+                wrongInput = false;
+            }
+                
         }
-        return inRange;
+        return retur;
     }
 }

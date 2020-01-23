@@ -1,6 +1,7 @@
 package theschoolmanagmentsystem.userEnvironment;
 
 import buisnesslogic.userEnvironmentAccess.UserEnviromentAccess;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 import theschoolmanagmentsystem.domain.Course;
@@ -102,18 +103,19 @@ public class UserEnviromentCommandPrImpl implements UserEnviromentAccess {
     @Override
     public String getStringInputFromUser(String textBeforeInput) {
         System.out.print(textBeforeInput);
-        return sc.nextLine();
+        String retur = sc.nextLine();
+        return retur;
     }
 
-    @Override
-    public Integer getIntegerInputFromUser(String textBeforeInput) {
-        System.out.print(textBeforeInput);
-        return sc.nextInt();
-    }
 
     @Override
     public void printText(String text) {
         System.out.println(text);
+    }
+
+    @Override
+    public Integer getIntegerInputFromUser(String textBeforeInput) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

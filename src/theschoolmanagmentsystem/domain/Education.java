@@ -123,7 +123,7 @@ public class Education implements Serializable {
 
     @Override
     public String toString() {
-        return "- Education: " + name + ", lasts from " + start + " to " + end + ", schoolBreak " + schoolBreak;
+        return "Id: " + id + ", Name:" + name + ", lasts from " + start + " to " + end + ", schoolBreak " + schoolBreak;
     }
     
     
