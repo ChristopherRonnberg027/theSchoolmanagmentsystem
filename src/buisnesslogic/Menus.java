@@ -136,8 +136,8 @@ public class Menus {
     public void teacherMenu() {
         boolean teacherMenuLoop = true;
         while (teacherMenuLoop) {
-            List<Teacher> teacherList = aListOfTeachersFromDataBase();
-            ue.printList(teacherList);
+            //List<Teacher> teacherList = aListOfTeachersFromDataBase();
+            ue.printList(db.getAllTeachers());
             int teacherMenuChoice = intInRangeFromUser(0, 2, teachersMenuText);
             switch (teacherMenuChoice) {
                 case 1:
@@ -287,13 +287,13 @@ public class Menus {
     public Teacher editTeacherInfo(Long pn) {
         Teacher teacher = new Teacher();
         teacher.setPn(pn);
-        String firstName = firstNameInput();
-        String surName = surNameInput();
+        String firstName = ue.getStringInputFromUser("First name: ");
+        String surName = ue.getStringInputFromUser("Sur name: ");
 
         teacher.setFirstName(firstName);
         teacher.setSurName(surName);
 
-        teacher = addCourseToTeacher(teacher);
+        teacher.setCourses(null);
 
         return teacher;
     }
@@ -341,7 +341,7 @@ public class Menus {
         Teacher newOrNotTeacher = thereIsAlreadyATeacher(pn);
         Teacher newTeacher = (newOrNotTeacher == null) ? editTeacherInfo(pn) : newOrNotTeacher;
 
-        if (newTeacher != null) {
+        if (newTeacher != null&& newOrNotTeacher == null) {
             db.createTeacher(newTeacher);
             ue.printText("New Teacher added!");
         } else {
@@ -357,8 +357,8 @@ public class Menus {
     public void studentMenu() {
         boolean studentMenuLoop = true;
         while (studentMenuLoop) {
-            List<Student> studentList = aListOFStudentFromDataBase();
-            ue.printList(studentList);
+            //List<Student> studentList = aListOFStudentFromDataBase();
+            ue.printList(db.getAllStudents());
             int studentMenuChoice = intInRangeFromUser(0, 2, studentsMenuText);
             switch (studentMenuChoice) {
                 case 1:
@@ -509,7 +509,7 @@ public class Menus {
 
         Student newStudent = (newOrNotStudent == null) ? editStudentInfo(pn) : newOrNotStudent;
 
-        if (newStudent != null) {
+        if (newStudent != null&&newOrNotStudent == null) {
             db.createStudent(newStudent);
             ue.printText("New Student added!");
         } else {
@@ -527,13 +527,13 @@ public class Menus {
         Student student = new Student();
         student.setPn(pn);
 
-        String firstName = firstNameInput();
-        String surName = surNameInput();
+        String firstName = ue.getStringInputFromUser("First name: ");
+        String surName = ue.getStringInputFromUser("Sur name: ");
 
         student.setFirstName(firstName);
         student.setSurName(surName);
 
-        student = addEducationToStudent(student);
+        student.setEducation(null);
         return student;
     }
 
@@ -578,8 +578,8 @@ public class Menus {
     public void educationMenu() {
         boolean educationMenuLoop = true;
         while (educationMenuLoop) {
-            List<Education> listOfEducations = aListOfEducationsFromDataBase();
-            ue.printList(listOfEducations);
+            //List<Education> listOfEducations = aListOfEducationsFromDataBase();
+            ue.printList(db.getAllEducations());
             int educationMenuChoice = intInRangeFromUser(0, 2, educationMenuText);
             switch (educationMenuChoice) {
                 case 1:
@@ -772,12 +772,13 @@ public class Menus {
 
         Education newEducation = (newOrNotEducation == null) ? editEducationInfo(id) : newOrNotEducation;
 
-        if (newEducation != null) {
+        if (newEducation != null && newOrNotEducation==null) {
             db.createEducation(newEducation);
             ue.printText("New Education added!");
         } else {
             ue.printText("Education not added..");
         }
+
     }
 
     /**
@@ -790,19 +791,19 @@ public class Menus {
         Education education = new Education();
 
         education.setId(id);
-        String name = nameInput();
-        String start = startDateInput();
-        String end = endDateInput();
-        String schoolBreak = schoolBreakInput();
+        String name = ue.getStringInputFromUser("Name: ");
+        String start = ue.getStringInputFromUser("Start date: ");
+        String end = ue.getStringInputFromUser("End date: ");
+        String schoolBreak = ue.getStringInputFromUser("School break: ");
 
         education.setName(name);
         education.setStart(start);
         education.setEnd(end);
         education.setSchoolBreak(schoolBreak);
 
-        education = addCourseToEducation(education);
+        education.setCourses(null);
 
-        education = addStudentToEducation(education);
+        education.setStudents(null);
 
         return education;
     }
@@ -1059,6 +1060,7 @@ public class Menus {
             ue.printText("Entity not saved...");
         }
     }
+//X
 
     /**
      * Edit Course information. Call the method with Course id number
@@ -1079,8 +1081,8 @@ public class Menus {
         course.setEnd(end);
         course.setSchoolBreak(schoolBreak);
 
-        // course = addEducationToCourse(course);
-        // course = addTeacherToCourse(course);
+        course.setEducations(null);
+        course.setTeachers(null);
         return course;
     }
 
@@ -1144,8 +1146,8 @@ public class Menus {
      */
     public Student printStudentListAndSearchAndFindStudent() {
         ue.printText(enterPnToAddMenuText);
-        List<Student> studentList = aListOFStudentFromDataBase();
-        ue.printList(studentList);
+        //List<Student> studentList = aListOFStudentFromDataBase();
+        ue.printList(db.getAllStudents());
         Student studentToEducation = searchAndFindStudent();
         return studentToEducation;
     }
@@ -1157,8 +1159,8 @@ public class Menus {
      */
     public Course printCourseListAndSearchAndCourse() {
         ue.printText(enterIdToAddMenuText);
-        List<Course> courseList = aListOfCoursesFromDataBase();
-        ue.printList(courseList);
+        //List<Course> courseList = aListOfCoursesFromDataBase();
+        ue.printList(db.getAllCourses());
         Course courseToEducation = searchAndFindCourse();
         return courseToEducation;
     }
@@ -1170,8 +1172,8 @@ public class Menus {
      */
     public Teacher printTeacherListAndSearchAndFindTeacher() {
         ue.printText(enterPnToAddMenuText);
-        List<Teacher> teacherList = aListOfTeachersFromDataBase();
-        ue.printList(teacherList);
+        //List<Teacher> teacherList = aListOfTeachersFromDataBase();
+        ue.printList(db.getAllTeachers());
         Teacher teacherToCourse = searchAndFindTeacher();
         return teacherToCourse;
     }
@@ -1183,51 +1185,12 @@ public class Menus {
      */
     public Education printEducationListAndSearchAndFindEducation() {
         ue.printText(enterIdToAddMenuText);
-        List<Education> educationList = aListOfEducationsFromDataBase();
-        ue.printList(educationList);
+        //List<Education> educationList = aListOfEducationsFromDataBase();
+        ue.printList(db.getAllEducations());
         Education educationToCourse = searchAndFindEducation();
         return educationToCourse;
     }
 
-    /**
-     * Creates a list of Students from all students in database
-     *
-     * @return a list of Students
-     */
-    public List<Student> aListOFStudentFromDataBase() {
-        List<Student> listOfStudents = db.getAllStudents();
-        return listOfStudents;
-    }
-
-    /**
-     * Creates a list of Courses from all courses in database
-     *
-     * @return a list of Courses
-     */
-    public List<Course> aListOfCoursesFromDataBase() {
-        List<Course> listOfCourses = db.getAllCourses();
-        return listOfCourses;
-    }
-
-    /**
-     * Creates a list of EDUCATIONS from all educations in database
-     *
-     * @return a list of Educations
-     */
-    public List<Education> aListOfEducationsFromDataBase() {
-        List<Education> listOfEducations = db.getAllEducations();
-        return listOfEducations;
-    }
-
-    /**
-     * Creates a list of Teachers from all teachers in database
-     *
-     * @return a list of Teachers
-     */
-    public List<Teacher> aListOfTeachersFromDataBase() {
-        List<Teacher> listOfTeachers = db.getAllTeachers();
-        return listOfTeachers;
-    }
 
     /**
      * Checks to see if there already is a Education in the system. Takes an
@@ -1245,7 +1208,7 @@ public class Menus {
         } catch (EntityNotFoundException e) {
         }  // Education was not found
         if (foundEducation != null) { // There was such Education already
-            ue.printText("There is already a education with that id number in the system");
+            ue.printText("There was such Education already");
             return foundEducation;
         }
         return null;
@@ -1268,7 +1231,7 @@ public class Menus {
         } catch (EntityNotFoundException e) {  // Course was not found
         }
         if (foundCourse != null) {   // There was such Course already
-            ue.printText("There is already a course with that id number in the system");
+            ue.printText("There was such Course already");
             return foundCourse;
         }
         return null;
@@ -1291,7 +1254,7 @@ public class Menus {
         }  // Teacher not found
 
         if (foundTeacher != null) { // There was such Teacher already
-            ue.printText("There is already a teacher with that person number in the system");
+            ue.printText("There was such Teacher already");
             return foundTeacher;
         }
         return null;
@@ -1314,7 +1277,7 @@ public class Menus {
         }  // Student not found
 
         if (foundStudent != null) { // There was such Student already
-            ue.printText("There is already a Student with that person number in the system");
+            ue.printText("There was such Student already");
             return foundStudent;
         }
         return null;
@@ -1326,7 +1289,6 @@ public class Menus {
      * @return an object of Education
      */
     public Education searchAndFindEducation() {
-        ue.printText("Enter Education ");
         Long educationId = idInput();
         Education educationFromDb = db.findEducationById(educationId);
         return educationFromDb;
@@ -1338,7 +1300,6 @@ public class Menus {
      * @return an object of Teacher
      */
     public Teacher searchAndFindTeacher() {
-        ue.printText("Enter Teacher ");
         Long pn = personNumberInput();
         Teacher teacherFromDb = db.findTeacherById(pn);
         return teacherFromDb;
@@ -1350,7 +1311,6 @@ public class Menus {
      * @return an object of Course
      */
     public Course searchAndFindCourse() {
-        ue.printText("Enter Course ");
         Long courseId = idInput();
         Course courseFromDb = db.findCourseById(courseId);
         return courseFromDb;
@@ -1362,7 +1322,6 @@ public class Menus {
      * @return an object of Student
      */
     public Student searchAndFindStudent() {
-        ue.printText("Enter Student ");
         Long pn = personNumberInput();
         Student studentFromDb = db.findStudentById(pn);
         return studentFromDb;
@@ -1374,61 +1333,19 @@ public class Menus {
      * @return a Long with validaded person number number
      */
     public Long personNumberInput() {
-        boolean isValid = false;
-        String inPut = "";
-        while (!isValid) {
-            char first;
-            inPut = ue.getStringInputFromUser("Person number: ");
-            if (inPut.length() > 0) {
-                first = inPut.charAt(0);
-                isValid = true;
-            } else {
-                ue.printText("Invalid input, try again");
+        boolean isNotValid = true; // Must run at least once
+        String inPut = ue.getStringInputFromUser("Enter person number:  ");
+        Long retur = null;
+        while (isNotValid) {
+            try {
+                retur = Long.parseLong(inPut);
+                isNotValid = false; // Parsing successfull
+            } catch (NumberFormatException e) { // Parsing failed
+                ue.printText("Invalid input.");
+                inPut = ue.getStringInputFromUser("Enter person number:  ");
             }
         }
-        return Long.parseLong(inPut);
-    }
-
-    /**
-     * String input for firstName.
-     *
-     * @return a String with validaded firstName
-     */
-    public String firstNameInput() {
-        boolean isValid = true;
-        String inPut = "";
-        while (isValid) {
-            char first;
-            inPut = ue.getStringInputFromUser("First name: ");
-            if (inPut.length() > 0) {
-                first = inPut.charAt(0);
-                isValid = false;
-            } else {
-                ue.printText("Invalid input, try again");
-            }
-        }
-        return inPut;
-    }
-
-    /**
-     * String input for surName.
-     *
-     * @return a String with validaded surName
-     */
-    public String surNameInput() {
-        boolean isValid = true;
-        String inPut = "";
-        while (isValid) {
-            char first;
-            inPut = ue.getStringInputFromUser("Sur name: ");
-            if (inPut.length() > 0) {
-                first = inPut.charAt(0);
-                isValid = false;
-            } else {
-                ue.printText("Invalid input, try again");
-            }
-        }
-        return inPut;
+        return retur;
     }
 
     /**
@@ -1438,7 +1355,7 @@ public class Menus {
      */
     public Long idInput() {
         boolean isNotValid = true; // Must run at least once
-        String inPut = ue.getStringInputFromUser("Course id? :  ");
+        String inPut = ue.getStringInputFromUser("Enter id:  ");
         Long retur = null;
         while (isNotValid) {
             try {
@@ -1446,95 +1363,10 @@ public class Menus {
                 isNotValid = false; // Parsing successfull
             } catch (NumberFormatException e) { // Parsing failed
                 ue.printText("Invalid input.");
-                inPut = ue.getStringInputFromUser("Course id? :");
-
+                inPut = ue.getStringInputFromUser("Enter id:");
             }
         }
         return retur;
-    }
-
-    /**
-     * String input for name.
-     *
-     * @return a String with validaded name
-     */
-    public String nameInput() {
-        boolean isValid = true;
-        String inPut = "";
-        while (isValid) {
-            char first;
-            inPut = ue.getStringInputFromUser("Name: ");
-            if (inPut.length() > 0) {
-                first = inPut.charAt(0);
-                isValid = false;
-            } else {
-                ue.printText("Invalid input, try again");
-            }
-        }
-        return inPut;
-    }
-
-    /**
-     * String input for start date.
-     *
-     * @return a String with validaded start date
-     */
-    public String startDateInput() {
-        boolean isValid = true;
-        String inPut = "";
-        while (isValid) {
-            char first;
-            inPut = ue.getStringInputFromUser("Start date: ");
-            if (inPut.length() > 0) {
-                first = inPut.charAt(0);
-                isValid = false;
-            } else {
-                ue.printText("Invalid input, try again");
-            }
-        }
-        return inPut;
-    }
-
-    /**
-     * String input for end date.
-     *
-     * @return a String with validaded end date
-     */
-    public String endDateInput() {
-        boolean isValid = true;
-        String inPut = "";
-        while (isValid) {
-            char first;
-            inPut = ue.getStringInputFromUser("End date: ");
-            if (inPut.length() > 0) {
-                first = inPut.charAt(0);
-                isValid = false;
-            } else {
-                ue.printText("Invalid input, try again");
-            }
-        }
-        return inPut;
-    }
-
-    /**
-     * String input for schoolBreak date.
-     *
-     * @return a String with validaded schoolBreak date
-     */
-    public String schoolBreakInput() {
-        boolean isValid = true;
-        String inPut = "";
-        while (isValid) {
-            char first;
-            inPut = ue.getStringInputFromUser("School break: ");
-            if (inPut.length() > 0) {
-                first = inPut.charAt(0);
-                isValid = false;
-            } else {
-                ue.printText("Invalid input, try again");
-            }
-        }
-        return inPut;
     }
 
     /**
@@ -1543,7 +1375,7 @@ public class Menus {
      *
      * @param min is the minimum integer input.
      * @param max is the maximum integer input.
-     * @param userInPut takes an integer from user.
+     * @param menyText takes an integer from user.
      * @return an integer in range of menu choices.
      */
     public int intInRangeFromUser(int min, int max, String menyText) {
@@ -1563,7 +1395,7 @@ public class Menus {
             } else {
                 wrongInput = false;
             }
-                
+
         }
         return retur;
     }

@@ -60,18 +60,18 @@ public class MenuTexts {
             + "\n0. Back\n";
 
     public static final String enterIdToAddMenuText
-            = "Enter id to add";
+            = "Enter id to add\n";
     public static final String enterPnToAddMenuText
-            = "Enter person number to add";
+            = "Enter person number to add\n";
     public static final String pressZeroForBackText
-            = "\n0. Back";
+            = "\n0. Back\n";
     public static final String averageAgeOfStudentsText
-            = "\nAverage age of Students";
+            = "\nAverage age of Students\n";
     public static final String averageAgeOfTeachersText
-            = "\nAverage age of Teachers";
+            = "\nAverage age of Teachers\n";
     public static final String yesNoText
             = "\n1. Yes"
-            + "\n0. No";
+            + "\n0. No\n";
 
     public static final String statMenuTexts
             = "--Statistics Menu--"
