@@ -14,47 +14,47 @@ public class MenuTexts {
     public static final String teachersMenuText
             = "--Teacher Menu--"
             + "\n1. Add new"
-            + "\n2. Edit"
+            + "\n2. Show / Edit"
             + "\n0. Back to Main\n";
 
     public static final String coursesMenuText
             = "--Course Menu--"
             + "\n1. Add new"
-            + "\n2. Edit"
+            + "\n2. Show / Edit"
             + "\n0. Back to Main\n";
 
     public static final String studentsMenuText
             = "--Student Menu--"
             + "\n1. Add new"
-            + "\n2. Edit"
+            + "\n2. Show / Edit"
             + "\n0. Back to Main\n";
 
     public static final String educationMenuText
             = "--Education Menu--"
             + "\n1. Add new"
-            + "\n2. Edit"
+            + "\n2. Show / Edit"
             + "\n0. Back to Main\n";
 
     public static final String courseEditMenuText
-            = "--Edit Course--"
+            = "--Show / Edit Course--"
             + "\n1. Edit Information"
             + "\n2. Delete this Course"
             + "\n0. Back\n";
 
     public static final String educationEditMenuText
-            = "--Edit Education--"
+            = "--Show / Edit Education--"
             + "\n1. Edit Information"
             + "\n2. Delete this Education"
             + "\n0. Back\n";
     
     public static final String teacherEditMenuText
-            = "--Edit Teacher--"
+            = "--Show / Edit Teacher--"
             + "\n1. Edit Information"
             + "\n2. Delete this Teacher"
             + "\n0. Back\n";
 
     public static final String studentEditMenuText
-            = "--Edit Student--"
+            = "--Show / Edit Student--"
             + "\n1. Edit Information"
             + "\n2. Delete this Student"
             + "\n0. Back\n";
