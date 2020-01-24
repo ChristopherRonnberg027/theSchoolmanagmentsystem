@@ -206,14 +206,14 @@ public class Menus {
                 deleteCourseLoop = false;
             } else {
                 ue.printList(courseList);
-                
+
                 ue.printText("\nEnter course id to delete it from this teacher:" + "\n");
                 Long id = idInput();
                 for (Course next : courseList) {
                     if (id == next.getId()) {
                         ue.printText("\nRemoving " + next.getName() + " from " + teacherToEdit.getFirstName() + " " + teacherToEdit.getSurName());
                         courseList.remove(next);
-                        
+
                     }
                 }
                 deleteCourseLoop = false;
@@ -257,9 +257,9 @@ public class Menus {
         Long pn = teacherToEdit.getPn();
         boolean editTeacherLoop = true;
         while (editTeacherLoop) {
-            
+
             int editTeacherChoice = intInRangeFromUser(0, 3, editTeacherTexts);
-            
+
             switch (editTeacherChoice) {
                 case 1:
                     teacherToEdit = editTeacherInfo(pn);
@@ -291,12 +291,12 @@ public class Menus {
         teacher.setPn(pn);
         String firstName = ue.getStringInputFromUser("First name: ");
         String surName = ue.getStringInputFromUser("Sur name: ");
-        
+
         teacher.setFirstName(firstName);
         teacher.setSurName(surName);
-        
+
         teacher.setCourses(null);
-        
+
         return teacher;
     }
 
@@ -323,14 +323,14 @@ public class Menus {
      * @param teacher
      */
     public void editTeacherToDB(Teacher teacher) {
-        
+
         try {
             db.editTeacher(teacher);
         } catch (Exception ex) {
             Logger.getLogger(Menus.class.getName()).log(Level.SEVERE, null, ex);
             ue.printText("Entity not saved...");
         }
-        
+
     }
 
     /**
@@ -343,14 +343,14 @@ public class Menus {
         Long pn = personNumberInput();
         Teacher newOrNotTeacher = thereIsAlreadyATeacher(pn);
         Teacher newTeacher = (newOrNotTeacher == null) ? editTeacherInfo(pn) : newOrNotTeacher;
-        
+
         if (newTeacher != null && newOrNotTeacher == null) {
             db.createTeacher(newTeacher);
             ue.printText("New Teacher added!");
         } else {
             ue.printText("Teacher not added...");
         }
-        
+
     }
 
     /**
@@ -409,7 +409,7 @@ public class Menus {
                         studentEditMenuLoop = false;
                         break;
                 }
-                
+
             }
         }
     }
@@ -430,12 +430,12 @@ public class Menus {
                 deleteEducationLoop = false;
             } else {
                 ue.printText(studentToEdit.getEducation().getId() + " " + studentToEdit.getEducation().getName());
-                
+
                 ue.printText("\nEnter education id to delete it from this student:" + "\n");
                 Long id = idInput();
                 if (id == studentToEdit.getEducation().getId()) {
                     studentToEdit.setEducation(null);
-                    
+
                 }
                 deleteEducationLoop = false;
             }
@@ -477,9 +477,9 @@ public class Menus {
         Long pn = studentToEdit.getPn();
         boolean editStudentLoop = true;
         while (editStudentLoop) {
-            
+
             int editStudentChoice = intInRangeFromUser(0, 3, editStudentTexts);
-            
+
             switch (editStudentChoice) {
                 case 1:
                     studentToEdit = editStudentInfo(pn);
@@ -508,11 +508,11 @@ public class Menus {
     public void addNewStudent() {
         ue.printText("Add new Student");
         Long pn = personNumberInput();
-        
+
         Student newOrNotStudent = thereIsAlreadyAStudent(pn);
-        
+
         Student newStudent = (newOrNotStudent == null) ? editStudentInfo(pn) : newOrNotStudent;
-        
+
         if (newStudent != null && newOrNotStudent == null) {
             db.createStudent(newStudent);
             ue.printText("New Student added!");
@@ -530,13 +530,13 @@ public class Menus {
     public Student editStudentInfo(Long pn) {
         Student student = new Student();
         student.setPn(pn);
-        
+
         String firstName = ue.getStringInputFromUser("First name: ");
         String surName = ue.getStringInputFromUser("Sur name: ");
-        
+
         student.setFirstName(firstName);
         student.setSurName(surName);
-        
+
         student.setEducation(null);
         return student;
     }
@@ -547,14 +547,14 @@ public class Menus {
      * @param student
      */
     public void editStudentToDB(Student student) {
-        
+
         try {
             db.editStudent(student);
         } catch (Exception ex) {
             Logger.getLogger(Menus.class.getName()).log(Level.SEVERE, null, ex);
             ue.printText("Entity not saved...");
         }
-        
+
     }
 
     /**
@@ -684,7 +684,7 @@ public class Menus {
                 deleteCourseLoop = false;
             } else {
                 ue.printList(courseList);
-                
+
                 ue.printText("\nEnter education id to delete it from this course:" + "\n");
                 Long id = idInput();
                 for (Course next : courseList) {
@@ -733,9 +733,9 @@ public class Menus {
         Long id = educationToEdit.getId();
         boolean editEducationLoop = true;
         while (editEducationLoop) {
-            
+
             int editEductionChoice = intInRangeFromUser(0, 5, editEducationTexts);
-            
+
             switch (editEductionChoice) {
                 case 1:
                     educationToEdit = editEducationInfo(id);
@@ -773,16 +773,16 @@ public class Menus {
         ue.printText("Add new Education");
         Long id = idInput();
         Education newOrNotEducation = thereIsAlreadyAEducation(id);
-        
+
         Education newEducation = (newOrNotEducation == null) ? editEducationInfo(id) : newOrNotEducation;
-        
+
         if (newEducation != null && newOrNotEducation == null) {
             db.createEducation(newEducation);
             ue.printText("New Education added!");
         } else {
             ue.printText("Education not added..");
         }
-        
+
     }
 
     /**
@@ -793,22 +793,22 @@ public class Menus {
      */
     public Education editEducationInfo(Long id) {
         Education education = new Education();
-        
+
         education.setId(id);
-        String name = ue.getStringInputFromUser("Name: ");
-        String start = ue.getStringInputFromUser("Start date: ");
-        String end = ue.getStringInputFromUser("End date: ");
-        String schoolBreak = ue.getStringInputFromUser("School break: ");
-        
+        String name = ue.getStringInputFromUser("Education name: ");
+        String start = ue.getStringInputFromUser("Start date YYMMDD: ");
+        String end = ue.getStringInputFromUser("End date YYMMDD: ");
+        String schoolBreak = ue.getStringInputFromUser("School break YYMMDD - YYMMDD: ");
+
         education.setName(name);
         education.setStart(start);
         education.setEnd(end);
         education.setSchoolBreak(schoolBreak);
-        
+
         education.setCourses(null);
-        
+
         education.setStudents(null);
-        
+
         return education;
     }
 
@@ -836,14 +836,14 @@ public class Menus {
      * @param education
      */
     public void editEducationToDB(Education education) {
-        
+
         try {
             db.editEducation(education);
         } catch (Exception ex) {
             Logger.getLogger(Menus.class.getName()).log(Level.SEVERE, null, ex);
             ue.printText("Entity not saved...");
         }
-        
+
     }
 
     /**
@@ -932,7 +932,7 @@ public class Menus {
      * @param courseToDelete An Object of Course
      */
     public void deleteCourse(Course courseToDelete) {
-        
+
         boolean isNotSure = true;
         while (isNotSure) {
             ue.printText("Delete " + courseToDelete.getName() + "?");
@@ -949,7 +949,7 @@ public class Menus {
                 isNotSure = false;
             }
         }
-        
+
     }
 
     /**
@@ -1001,14 +1001,14 @@ public class Menus {
                 deleteEducationLoop = false;
             } else {
                 ue.printList(educationList);
-                
+
                 ue.printText("\nEnter education id to delete it from this course:" + "\n");
                 Long id = idInput();
                 for (Education next : educationList) {
                     if (id == next.getId()) {
                         ue.printText("\nRemoving " + next.getName() + " from " + courseToEdit.getName());
                         educationList.remove(next);
-                        
+
                     }
                 }
                 deleteEducationLoop = false;
@@ -1027,9 +1027,9 @@ public class Menus {
         Long id = courseToEdit.getId();
         boolean editCourseLoop = true;
         while (editCourseLoop) {
-            
+
             int editCourseChoice = intInRangeFromUser(0, 5, editCourseTexts);
-            
+
             switch (editCourseChoice) {
                 case 1:
                     courseToEdit = editCourseInfo(id);
@@ -1081,16 +1081,16 @@ public class Menus {
     public Course editCourseInfo(Long id) {
         Course course = new Course();
         course.setId(id);
-        String name = ue.getStringInputFromUser("Name:  ");
-        String start = ue.getStringInputFromUser("Start date:  ");
-        String end = ue.getStringInputFromUser("End date:  ");
-        String schoolBreak = ue.getStringInputFromUser("Schol break:  ");
+        String name = ue.getStringInputFromUser("Course name:  ");
+        String start = ue.getStringInputFromUser("Start date YYMMDD: ");
+        String end = ue.getStringInputFromUser("End date YYMMDD: ");
+        String schoolBreak = ue.getStringInputFromUser("School break YYMMDD - YYMMDD: ");
         
         course.setName(name);
         course.setStart(start);
         course.setEnd(end);
         course.setSchoolBreak(schoolBreak);
-        
+
         course.setEducations(null);
         course.setTeachers(null);
         return course;
@@ -1103,11 +1103,11 @@ public class Menus {
      * @return course
      */
     public Course addTeacherToCourse(Course course) {
-        
+
         Teacher teacherToCourse = printTeacherListAndSearchAndFindTeacher();
         if (teacherToCourse != null) {
             course.addTeacher(teacherToCourse);
-        }        
+        }
         return course;
     }
 
@@ -1119,14 +1119,14 @@ public class Menus {
      * @return a object of Course
      */
     public Course addEducationToCourse(Course course) {
-        
+
         Education educationToCourse = null;
         educationToCourse = printEducationListAndSearchAndFindEducation();
         if (educationToCourse != null) {
             course.addEducation(educationToCourse);
         }
         return course;
-        
+
     }
 
     /**
@@ -1138,9 +1138,9 @@ public class Menus {
         ue.printText("Add new Course");
         Long id = idInput();
         Course newOrNotCourse = thereIsAlreadyACourse(id);
-        
+
         Course newCourse = (newOrNotCourse == null) ? editCourseInfo(id) : newOrNotCourse;
-        
+
         if (newCourse != null && newOrNotCourse == null) {
             db.createCourse(newCourse);
             ue.printText("New Course added!");
@@ -1160,9 +1160,9 @@ public class Menus {
 
         ue.printList(db.getAllStudents());
         Student studentToEducation = searchAndFindStudent();
-        
+
         return studentToEducation;
-        
+
     }
 
     /**
@@ -1240,7 +1240,7 @@ public class Menus {
      * @return an object of Student
      */
     public Student searchAndFindStudent() {
-        
+
         Long pn = personNumberInput();
         Student studentFromDb = db.findStudentById(pn);
         return studentFromDb;
@@ -1290,7 +1290,7 @@ public class Menus {
         Course foundCourse = null;
         try {
             foundCourse = db.findCourseById(id);
-            
+
         } catch (EntityNotFoundException e) {  // Course was not found
         }
         if (foundCourse != null) {   // There was such Course already
@@ -1414,11 +1414,11 @@ public class Menus {
             } else {
                 wrongInput = false;
             }
-            
+
         }
         return retur;
     }
-    
+
     public void printStudentInfo(Student studentToPrint) {
         Education education = null;
         education = studentToPrint.getEducation();
@@ -1428,7 +1428,7 @@ public class Menus {
             ue.printText(studentToPrint.getPn() + ", " + studentToPrint.getFirstName() + " " + studentToPrint.getSurName());
         }
     }
-    
+
     public void printTeacherInfo(Teacher teacherToPrint) {
         List<Course> listOfCourses = null;
         listOfCourses = teacherToPrint.getCourses();
@@ -1438,9 +1438,9 @@ public class Menus {
             ue.printText(teacherToPrint.getPn() + ", " + teacherToPrint.getFirstName() + " " + teacherToPrint.getSurName());
         }
     }
-    
+
     public void printCourseInfo(Course courseToPrint) {
-        
+
         List<Education> listOfEducation = null;
         List<Teacher> listOfTeachers = null;
         listOfEducation = courseToPrint.getEducations();
@@ -1451,9 +1451,9 @@ public class Menus {
             ue.printText(courseToPrint.getId() + ", " + courseToPrint.getName());
         }
     }
-    
+
     public void printEducationInfo(Education educationToPrint) {
-        
+
         List<Course> listOfCourses = null;
         List<Student> listOfStudents = null;
         listOfCourses = educationToPrint.getCourses();
